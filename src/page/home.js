@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Header from '../component/header';
+import FormAddTask from '../component/task/formAddTask';
 
 
 const Home = (props) => {
@@ -9,12 +10,12 @@ const Home = (props) => {
         <Container >
             <Header title={"to do"}/>
             <Row>
-                <Col md={3}>
-                    scrivi task
+                <Col md={5}>
+                    <FormAddTask/>
                 </Col>
 
-                <Col md={9}>
-                    secondo task
+                <Col>
+                    lista dei tasks
                 </Col>
             </Row>
         </Container >
