@@ -45,3 +45,13 @@ export const getAllTasks = async () => {
         console.log('Errore durante il recupero dei task: ', error);
     }
 };
+
+
+export const modifyTask = async (task) => {
+    try {
+        const response = await db.put(task);
+        return response;
+    } catch (error) {
+        console.log('Errore durante l\'inserimento del task: ', error);
+    }
+};

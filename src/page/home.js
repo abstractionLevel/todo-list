@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col,ListGroup  } from 'react-bootstrap';
+import { Container, Row, Col, ListGroup, Form } from 'react-bootstrap';
 import Header from '../component/header';
 import FormAddTask from '../component/task/formAddTask';
-import { getAllTasks } from '../db/database';
+import { getAllTasks,getTask,modifyTask } from '../db/database';
 
 const Home = (props) => {
 
     const [tasks, setTasks] = useState([]);
+
+    const deleteTask = (id) => {
+
+    }
+
+    const updateTask = (id,isDone) => {
+        let task = null;
+        let fetchTask  = async () => {
+            task = await getTask(id);
+            task.isDone =  !isDone
+            modifyTask(task);
+        }
+        fetchTask();
+    }
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -15,7 +29,6 @@ const Home = (props) => {
                 setTasks(allTasks);
             }
         };
-        console.log("")
         fetchTasks();
     }, [])
 
@@ -33,8 +46,14 @@ const Home = (props) => {
                     {tasks.length > 0 &&
                         <ListGroup>
                             {tasks.map((task, index) => (
-                                <ListGroup.Item key={task._id} className="mb-4">
+                                <ListGroup.Item key={task._id} className="mb-4 d-flex justify-content-between align-items-center">
                                     {task.description}
+                                    <Form.Check
+                                        inline
+                                        type="checkbox"
+                                        checked={task.isDone}
+                                        onChange={()=>updateTask(task._id,task.isDone)}
+                                    />
                                 </ListGroup.Item>
                             ))}
                         </ListGroup>
