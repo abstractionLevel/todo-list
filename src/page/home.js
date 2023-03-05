@@ -1,21 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col,ListGroup  } from 'react-bootstrap';
 import Header from '../component/header';
 import FormAddTask from '../component/task/formAddTask';
-
+import { getAllTasks } from '../db/database';
 
 const Home = (props) => {
 
+    const [tasks, setTasks] = useState([]);
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            const allTasks = await getAllTasks();
+            if (allTasks) {
+                setTasks(allTasks);
+            }
+        };
+        console.log("")
+        fetchTasks();
+    }, [])
+
+
+
     return (
         <Container >
-            <Header title={"to do"}/>
+            <Header title={"to do"} />
             <Row>
                 <Col md={5}>
-                    <FormAddTask/>
+                    <FormAddTask />
                 </Col>
 
                 <Col>
-                    lista dei tasks
+                    {tasks.length > 0 &&
+                        <ListGroup>
+                            {tasks.map((task, index) => (
+                                <ListGroup.Item key={task._id} className="mb-4">
+                                    {task.description}
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                    }
                 </Col>
             </Row>
         </Container >
@@ -25,7 +48,7 @@ const Home = (props) => {
 const ShowEmployee = (props) => {
     return (
         <>
-           List
+            List
 
         </>
     )
