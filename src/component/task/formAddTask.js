@@ -15,6 +15,7 @@ const FormAddTask = (props) => {
         }
         await addTask(task);
         setDescription("");
+        window.location.reload(false);
     }
 
     const handleDescriptionChange = (e) => {
