@@ -8,10 +8,6 @@ const Home = (props) => {
 
     const [tasks, setTasks] = useState([]);
 
-    const deleteTask = (id) => {
-
-    }
-
     const updateTask = (id, isDone) => {
         let task = null;
         let fetchTask = async () => {

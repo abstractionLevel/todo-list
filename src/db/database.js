@@ -9,6 +9,7 @@ export const addTask = async (task) => {
             _id: new Date().toISOString(), // utilizza la data corrente come ID
             description: task.description,
             isDone: task.isDone,
+            priority: task.priority
         });
         return response;
     } catch (error) {
