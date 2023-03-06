@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, ListGroup, Form, Badge } from 'react-bootstrap';
 import Header from '../component/header';
 import FormAddTask from '../component/task/formAddTask';
 import { getAllTasks, getTask, modifyTask, getTasksByPriority } from '../db/database';
+import { Trash } from 'react-bootstrap-icons';
+import ModalDeleteTask from '../component/modalDeleteTask';
+import { GlobalContext } from '../context/globalContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Home = (props) => {
 
     const [tasks, setTasks] = useState([]);
+    const [isModalOpen, setIsModalIsOpen] = useState(false);
+    const { isToast, setIToast } = useContext(GlobalContext);
 
     const updateTask = (id, isDone) => {
         let task = null;
@@ -42,6 +49,29 @@ const Home = (props) => {
         };
         fetchTasks();
     }, [])
+
+    useEffect(() => {
+        if (isToast) {
+            toast('🦄 Task Deleted !!', {
+                position: "bottom-right",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+        const fetchTasks = async () => {
+            const allTasks = await getAllTasks();
+            if (allTasks) {
+                setTasks(allTasks)
+                setIToast(false);
+            }
+        };
+        fetchTasks();
+    }, [isToast])
 
 
 
@@ -89,26 +119,38 @@ const Home = (props) => {
                             </Row>
                             {tasks.map((task, index) => (
                                 <>
-                                    <ListGroup.Item key={task._id} className="mb-4 d-flex justify-content-between align-items-center"
+                                    <ListGroup.Item key={task._id} className="mb-4 d-flex  align-items-center justify-content-between"
                                         style={{
                                             textDecoration: task.isDone ? "line-through" : "none",
                                             borderRadius: 0,
                                             backgroundColor: task.priority === "low" ? "rgba(0, 128, 0, 0.1)" : task.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
                                         }}>
                                         {task.description}
-                                        <Form.Check
-                                            inline
-                                            type="checkbox"
-                                            checked={task.isDone}
-                                            onChange={() => updateTask(task._id, task.isDone)}
-                                        />
+                                        <div>
+                                            <Form.Check
+                                                inline
+                                                type="checkbox"
+                                                checked={task.isDone}
+                                                onChange={() => updateTask(task._id, task.isDone)}
+
+                                            />
+                                            <button onClick={() => setIsModalIsOpen(true)}     >
+                                                <Trash />
+                                            </button>
+                                        </div>
+
                                     </ListGroup.Item>
+                                    <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={task} />
                                 </>
+
                             ))}
+                            <ToastContainer
+                            />
                         </ListGroup>
                     }
                 </Col>
             </Row>
+
         </Container >
     )
 }

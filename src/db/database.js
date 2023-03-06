@@ -70,3 +70,14 @@ export const modifyTask = async (task) => {
         console.log('Errore durante l\'inserimento del task: ', error);
     }
 };
+
+
+export const removeTaskById = async (id) => {
+    db.get(id)
+        .then(resp=>{
+            if(resp) {
+                return db.remove(resp)
+            }
+        })
+        .catch(error=>console.log("error: ", error))
+}
