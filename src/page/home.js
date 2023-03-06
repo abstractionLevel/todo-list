@@ -84,7 +84,7 @@ const Home = (props) => {
                                     style={{ width: "100px", marginLeft: '2px' }}
                                     onClick={() => onClickAll()}
                                 >
-                                    tutti
+                                    all
                                 </Badge>
                             </Row>
                             {tasks.map((task, index) => (
