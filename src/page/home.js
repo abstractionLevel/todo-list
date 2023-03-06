@@ -53,8 +53,9 @@ const Home = (props) => {
                                     <ListGroup.Item key={task._id} className="mb-4 d-flex justify-content-between align-items-center"
                                         style={{
                                             textDecoration: task.isDone ? "line-through" : "none",
-                                            border: task.priority === "low" ? "1px solid green" : task.priority === "medium" ? "1px solid blue" : "1px solid red",
+                                            // border: task.priority === "low" ? "1px solid green" : task.priority === "medium" ? "1px solid blue" : "1px solid red",
                                             borderRadius: 0,
+                                            backgroundColor: task.priority === "low" ? "rgba(0, 128, 0, 0.1)"  : task.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
                                         }}>
                                         {task.description}
                                         <Form.Check
