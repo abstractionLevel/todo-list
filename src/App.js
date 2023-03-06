@@ -8,10 +8,10 @@ import { GlobalContext } from './context/globalContext';
 
 function App() {
 
-	const [ isToast, setIToast] = useState(false);
+	const [ isToast, setIsToast] = useState(false);
 
 	return (
-		<GlobalContext.Provider value={{  isToast, setIToast }}>
+		<GlobalContext.Provider value={{  isToast, setIsToast }}>
 			<BrowserRouter>
 				<Routes>
 					<Route path="/" element={<Home />} />

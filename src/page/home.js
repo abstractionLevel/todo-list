@@ -13,7 +13,7 @@ const Home = (props) => {
 
     const [tasks, setTasks] = useState([]);
     const [isModalOpen, setIsModalIsOpen] = useState(false);
-    const { isToast, setIToast } = useContext(GlobalContext);
+    const { isToast, setIsToast } = useContext(GlobalContext);
 
     const updateTask = (id, isDone) => {
         let task = null;
@@ -65,9 +65,10 @@ const Home = (props) => {
         }
         const fetchTasks = async () => {
             const allTasks = await getAllTasks();
+            console.log("fetchData  ", allTasks)
             if (allTasks) {
                 setTasks(allTasks)
-                setIToast(false);
+                setIsToast(false);
             }
         };
         fetchTasks();

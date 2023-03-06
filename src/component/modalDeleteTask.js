@@ -7,14 +7,14 @@ import { GlobalContext } from '../context/globalContext';
 
 const ModalDeleteTask = (props) => {
 
-    const { isToast, setIToast } = useContext(GlobalContext);
+    const { isToast, setIsToast } = useContext(GlobalContext);
 
     const onClickDelete = () => {
        
         removeTaskById(props.task._id)
             .then(resp => {
                 props.close();
-                setIToast(true)
+                setIsToast(true)
             })
     }
 
