@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, ListGroup, Form, Badge } from 'react-bootstrap';
 import Header from '../component/header';
 import FormAddTask from '../component/task/formAddTask';
-import { getAllTasks, getTask, modifyTask } from '../db/database';
+import { getAllTasks, getTask, modifyTask, getTasksByPriority } from '../db/database';
 
 const Home = (props) => {
 
@@ -17,6 +17,20 @@ const Home = (props) => {
             window.location.reload(false);
         }
         fetchTask();
+    }
+
+    const onClickPriority = (value) => {
+        getTasksByPriority(value)
+            .then(response => {
+                setTasks(response);
+            })
+    }
+
+    const onClickAll = async () => {
+        await getAllTasks()
+            .then(response => {
+                setTasks(response)
+            });
     }
 
     useEffect(() => {
@@ -42,20 +56,44 @@ const Home = (props) => {
                 <Col>
                     {tasks.length > 0 &&
                         <ListGroup>
+                            <Row style={{ marginLeft: "2px", marginBottom: "10px" }}>
+                                <Badge
+                                    bg={"success"}
+                                    style={{ width: "100px" }}
+                                    onClick={() => onClickPriority("low")}
+                                    name="low"
+                                >
+                                    low
+                                </Badge>
+                                <Badge
+                                    bg={"primary"}
+                                    style={{ width: "100px", marginLeft: '2px' }}
+                                    onClick={() => onClickPriority("medium")}
+                                >
+                                    medium
+                                </Badge>
+                                <Badge
+                                    bg={"danger"}
+                                    style={{ width: "100px", marginLeft: '2px' }}
+                                    onClick={() => onClickPriority("high")}
+                                >
+                                    high
+                                </Badge>
+                                <Badge
+                                    bg={"dark"}
+                                    style={{ width: "100px", marginLeft: '2px' }}
+                                    onClick={() => onClickAll()}
+                                >
+                                    tutti
+                                </Badge>
+                            </Row>
                             {tasks.map((task, index) => (
                                 <>
-                                    <Badge
-                                        bg={ task.priority === 'low' ? 'success' : task.priority === 'medium' ? 'primary': 'danger'}
-                                        style={{width: '100px',marginLeft: "auto",marginBottom:"10px"}}
-                                    >
-                                        {task.priority}
-                                    </Badge>
                                     <ListGroup.Item key={task._id} className="mb-4 d-flex justify-content-between align-items-center"
                                         style={{
                                             textDecoration: task.isDone ? "line-through" : "none",
-                                            // border: task.priority === "low" ? "1px solid green" : task.priority === "medium" ? "1px solid blue" : "1px solid red",
                                             borderRadius: 0,
-                                            backgroundColor: task.priority === "low" ? "rgba(0, 128, 0, 0.1)"  : task.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
+                                            backgroundColor: task.priority === "low" ? "rgba(0, 128, 0, 0.1)" : task.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
                                         }}>
                                         {task.description}
                                         <Form.Check

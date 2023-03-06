@@ -1,5 +1,6 @@
 import PouchDB from 'pouchdb';
-
+import pouchFind from 'pouchdb-find';
+PouchDB.plugin(pouchFind);
 
 const db = new PouchDB('tasks', { auto_compaction: true });
 
@@ -26,6 +27,18 @@ export const getTask = async (taskId) => {
     }
 };
 
+export const getTasksByPriority = async (value) => {
+    try {
+        const response = await db.find({
+            selector: { priority: value },
+        })
+        return response.docs;
+    } catch (error) {
+        console.log('Errore durante la lettura del task: ', error);
+    }
+
+}
+
 export const deleteTask = async (taskId) => {
     try {
         const task = await db.get(taskId);
@@ -41,7 +54,8 @@ export const getAllTasks = async () => {
     try {
         const result = await db.allDocs({ include_docs: true });
         const tasks = result.rows.map(row => row.doc);
-        return tasks;
+        const sortedTasks = tasks.sort((a, b) => a.isDone - b.isDone);
+        return sortedTasks;
     } catch (error) {
         console.log('Errore durante il recupero dei task: ', error);
     }
