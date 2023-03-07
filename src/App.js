@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, HashRouter } from 'react-router-dom';
 import Home from './page/home';
 import React, { useState } from 'react';
 import { GlobalContext } from './context/globalContext';
@@ -12,11 +12,11 @@ function App() {
 
 	return (
 		<GlobalContext.Provider value={{  isToast, setIsToast }}>
-			<BrowserRouter>
+			<HashRouter>
 				<Routes>
 					<Route path="/" element={<Home />} />
 				</Routes>
-			</BrowserRouter>
+			</HashRouter>
 		</GlobalContext.Provider>
 	);
 }
