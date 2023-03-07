@@ -78,9 +78,9 @@ const Home = (props) => {
 
     return (
         <Container >
-            <Header title={"to do"} />
+            <Header title={""} />
             <Row>
-                <Col md={5}>
+                <Col md={4}>
                     <FormAddTask />
                 </Col>
 

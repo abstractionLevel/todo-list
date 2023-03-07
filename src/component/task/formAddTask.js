@@ -34,7 +34,7 @@ const FormAddTask = (props) => {
     return (
         <Form>
             <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Control type="text" placeholder="scrivi il task" value={description} onChange={handleDescriptionChange} />
+                <Form.Control  as="textarea" rows={3}  placeholder="scrivi il task" value={description} onChange={handleDescriptionChange} />
             </Form.Group>
             <Form.Select name="priority" onChange={handleChange}>
                 <option value="low">Low</option>

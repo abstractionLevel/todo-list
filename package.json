@@ -1,5 +1,5 @@
 {
-  "name": "todo-list",
+  "name": "todo",
   "version": "0.1.0",
   "homepage": "./",
   "dependencies": {
@@ -96,10 +96,8 @@
       }
     },
     "win": {
-      "publish": {
-        "provider": "github",
-        "owner": "cinarrtolga",
-        "repo": "ART-React-Electron-App"
+      "win": {
+        "icon": ""
       }
     },
     "files": [

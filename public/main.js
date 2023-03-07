@@ -1,7 +1,7 @@
 // main.js
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 const isDev = require('electron-is-dev');
 
@@ -10,25 +10,19 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
+        icon: path.join(__dirname, '/icon.png'),
         webPreferences: {
-           enableRemoteModuel:true
+            enableRemoteModuel: true
         }
+
     })
-
-    // and load the index.html of the app.
-    // mainWindow.loadURL('http://localhost:3000')
-    // mainWindow.loadURL(isDev ? MAIN_WINDOW_WEBPACK_ENTRY : `file://${path.join(__dirname, '../build/index.html')}`)
-
+console.log(path.join(__dirname, '/'))
     if (isDev) {
         mainWindow.loadURL('http://localhost:3000');
-        mainWindow.webContents.openDevTools();
-      } else {
+        //  mainWindow.webContents.openDevTools();
+    } else {
         mainWindow.loadFile(path.join(__dirname, '../build/index.html'));
-      }
-
-
-    // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    }
 }
 
 // This method will be called when Electron has finished
@@ -36,7 +30,7 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
     createWindow()
-
+    Menu.setApplicationMenu(null);
     app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
