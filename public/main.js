@@ -4,6 +4,9 @@
 const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 const isDev = require('electron-is-dev');
+const log = require('electron-log');
+
+
 
 const createWindow = () => {
     // Create the browser window.
@@ -16,7 +19,23 @@ const createWindow = () => {
         }
 
     })
-console.log(path.join(__dirname, '/'))
+
+    // Imposta la directory dei log
+    log.transports.file.file = 'logs.log';
+
+    // Imposta il livello di log
+    log.transports.file.level = 'info';
+
+    // Inizializza il modulo log
+    log.transports.file.format = '{h}:{i}:{s}:{ms} {text}';
+
+    // Aggiungi un listener all'evento 'console-message' della finestra di rendering
+    mainWindow.webContents.on('console-message', (event, level, message) => {
+        // Scrivi il messaggio di log nel file di log
+        log.info(`[Renderer] [${level}] ${message}`);
+    });
+    mainWindow.webContents.openDevTools();
+
     if (isDev) {
         mainWindow.loadURL('http://localhost:3000');
         //  mainWindow.webContents.openDevTools();
