@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, Row, Col, ListGroup, Form, Badge } from 'react-bootstrap';
+import { Container, Row, Col, ListGroup, Form, Badge, Button } from 'react-bootstrap';
 import Header from '../component/header';
 import FormAddTask from '../component/form/formAddTask';
 import { getAllTasks, getTask, modifyTask, getTasksByPriority, getAllCategories } from '../db/database';
@@ -9,13 +9,16 @@ import { GlobalContext } from '../context/globalContext';
 import { ToastContainer, toast } from 'react-toastify';
 import FormAddCategory from '../component/form/formAddCategory';
 import 'react-toastify/dist/ReactToastify.css';
+import ModalAddTask from '../component/modal/modalAddTask';
 
 const Home = (props) => {
 
     const [tasks, setTasks] = useState([]);
     const [isModalOpen, setIsModalIsOpen] = useState(false);
+    const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
     const { isToast, setIsToast } = useContext(GlobalContext);
     const [categories, setCategories] = useState([]);
+    const [category, setCategory] = useState(null);
 
     const updateTask = (id, isDone) => {
         let task = null;
@@ -43,7 +46,17 @@ const Home = (props) => {
     }
 
     const handleCategoryClick = (category) => {
-        
+        setCategory(category)
+        console.log("categ ", category._id )
+        getAllTasks(category._id)
+            .then(response => {
+                if (response) {
+                    setTasks(response)
+                    setIsToast(false);
+                } else {
+                    setTasks([])
+                }
+            })
     }
 
     useEffect(() => {
@@ -54,6 +67,9 @@ const Home = (props) => {
             }
         };
         fetchTasks();
+    }, [])
+
+    useEffect(() => {
         getAllCategories()
             .then(response => {
                 setCategories(response);
@@ -73,14 +89,7 @@ const Home = (props) => {
                 theme: "colored",
             });
         }
-        const fetchTasks = async () => {
-            const allTasks = await getAllTasks();
-            if (allTasks) {
-                setTasks(allTasks)
-                setIsToast(false);
-            }
-        };
-        fetchTasks();
+
     }, [isToast])
 
 
@@ -92,30 +101,33 @@ const Home = (props) => {
                 <Col md={4}>
                     <ListGroup>
                         {categories.length > 0 &&
-
-                            categories.map((category, index) => (
+                            categories.map((val, index) => (
                                 <>
                                     <ListGroup.Item
-                                        key={category._id}
-                                        className="mb-4 d-flex  align-items-center justify-content-between"
-                                        onClick={() => handleCategoryClick(category)}
+                                        key={val._id}
+                                        className="mb-3 d-flex  align-items-center justify-content-between"
+                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: val._id === category && category._id  ? "#efefef" : null }}
+                                        onClick={() => handleCategoryClick(val)} 
                                     >
-                                        {category.name}
-                                        {/* <div>
-                                            <button onClick={() => setIsModalIsOpen(true)}     >
-                                                <Trash />
-                                            </button>
-                                        </div> */}
+                                        <span style={{ fontWeight: "bold" }}>{val.name}</span>
                                     </ListGroup.Item>
                                 </>
                             ))}
                         <FormAddCategory />
                     </ListGroup>
-                    {/* <FormAddTask /> */}
                 </Col>
-
                 <Col>
-                    {tasks.length > 0 &&
+                    {category &&
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <p>task for category: {category.name}</p>
+                            <Button variant="primary" type="submit" className="mt-1" onClick={() => setIsAddTaskModalOpen(true)}>
+                                Add Task
+                            </Button>
+                        </div>
+                    }
+                    <div style={{ borderBottom: "1px solid black", marginBottom: "10px", marginTop: "10px" }}>
+                    </div>
+                    {tasks.length > 0 ?
                         <ListGroup>
                             <Row style={{ marginLeft: "2px", marginBottom: "10px" }}>
                                 <Badge
@@ -173,11 +185,14 @@ const Home = (props) => {
                                     </ListGroup.Item>
                                     <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={task} />
                                 </>
+
+
                             ))}
                             <ToastContainer
                             />
                         </ListGroup>
-                    }
+                        : <div>No taks</div>}
+                    <ModalAddTask close={() => setIsAddTaskModalOpen(false)} open={isAddTaskModalOpen} category={category} />
                 </Col>
             </Row>
 

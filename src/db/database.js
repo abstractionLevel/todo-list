@@ -24,7 +24,8 @@ export const addTask = async (task) => {
             _id: new Date().toISOString(), // utilizza la data corrente come ID
             description: task.description,
             isDone: task.isDone,
-            priority: task.priority
+            priority: task.priority,
+            category_id:task.categoryId
         });
         return response;
     } catch (error) {
@@ -64,11 +65,12 @@ export const deleteTask = async (taskId) => {
 };
 
 
-export const getAllTasks = async () => {
+export const getAllTasks = async (categoryId) => {
     try {
         const result = await db.allDocs({ include_docs: true });
         const tasks = result.rows.map(row => row.doc);
-        const sortedTasks = tasks.sort((a, b) => a.isDone - b.isDone);
+        const filteredTasks = tasks.filter(task => task.category_id === categoryId);
+        const sortedTasks = filteredTasks.sort((a, b) => a.isDone - b.isDone);
         return sortedTasks;
     } catch (error) {
         console.log('Errore durante il recupero dei task: ', error);
@@ -98,7 +100,7 @@ export const removeTaskById = async (id) => {
 
 export const addCategory = async (payload) => {
     try {
-        const response = await db.put({
+        const response = await dbCatergory.put({
             _id: new Date().toISOString(), // utilizza la data corrente come ID
             name: payload.name,
 
@@ -113,7 +115,6 @@ export const getAllCategories = async () => {
     try {
         const response =  await dbCatergory.allDocs({ include_docs: true });
         const categories = response.rows.map(val=>val.doc);
-        console.log("reac ", categories)
         return categories;
     } catch (error) {
         console.log('Errore durante il recupero dei task: ', error);

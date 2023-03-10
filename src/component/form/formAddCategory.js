@@ -10,11 +10,10 @@ const FormAddCategory = (props) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("salvato")
-        // addCategory({ name: name })
-        //     .then(response => {
-
-        //     })
+        addCategory({ name: name })
+            .then(response => {
+                setName("");
+            })
     }
 
     // const handleChange = (event) => {

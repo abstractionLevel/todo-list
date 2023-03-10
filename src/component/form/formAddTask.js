@@ -54,16 +54,6 @@ const FormAddTask = (props) => {
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Control as="textarea" rows={3} placeholder="scrivi il task" value={description} onChange={handleDescriptionChange} />
                 </Form.Group>
-                {!createNewCategory &&
-                    <Form.Select name="priority" onChange={handleCategoryChange}>
-                        <option default value="low">chose the category</option>
-                        <option value="global">Global</option>
-                    </Form.Select>
-                }
-                <Form.Check type="checkbox" label="Create new category" className="mt-3" onChange={handleCreateNewCategoryCheckboxChange} />
-                {createNewCategory &&
-                    <Form.Control type="text" placeholder="Add Category" className="mt-2" value={category} onChange={handleCategoryChange} />
-                }
                 <Form.Select name="priority" onChange={handleChange} className="mt-3">
                     <option default value="low">chose the priority</option>
                     <option value="low">Low</option>
