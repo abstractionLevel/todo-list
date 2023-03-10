@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, ListGroup, Form, Badge } from 'react-bootstrap';
 import Header from '../component/header';
-import FormAddTask from '../component/task/formAddTask';
-import { getAllTasks, getTask, modifyTask, getTasksByPriority } from '../db/database';
+import FormAddTask from '../component/form/formAddTask';
+import { getAllTasks, getTask, modifyTask, getTasksByPriority, getAllCategories } from '../db/database';
 import { Trash } from 'react-bootstrap-icons';
 import ModalDeleteTask from '../component/modalDeleteTask';
 import { GlobalContext } from '../context/globalContext';
 import { ToastContainer, toast } from 'react-toastify';
+import FormAddCategory from '../component/form/formAddCategory';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Home = (props) => {
@@ -14,6 +15,7 @@ const Home = (props) => {
     const [tasks, setTasks] = useState([]);
     const [isModalOpen, setIsModalIsOpen] = useState(false);
     const { isToast, setIsToast } = useContext(GlobalContext);
+    const [categories, setCategories] = useState([]);
 
     const updateTask = (id, isDone) => {
         let task = null;
@@ -40,6 +42,10 @@ const Home = (props) => {
             });
     }
 
+    const handleCategoryClick = (category) => {
+        
+    }
+
     useEffect(() => {
         const fetchTasks = async () => {
             const allTasks = await getAllTasks();
@@ -48,6 +54,10 @@ const Home = (props) => {
             }
         };
         fetchTasks();
+        getAllCategories()
+            .then(response => {
+                setCategories(response);
+            })
     }, [])
 
     useEffect(() => {
@@ -65,7 +75,6 @@ const Home = (props) => {
         }
         const fetchTasks = async () => {
             const allTasks = await getAllTasks();
-            console.log("fetchData  ", allTasks)
             if (allTasks) {
                 setTasks(allTasks)
                 setIsToast(false);
@@ -81,7 +90,28 @@ const Home = (props) => {
             <Header title={""} />
             <Row>
                 <Col md={4}>
-                    <FormAddTask />
+                    <ListGroup>
+                        {categories.length > 0 &&
+
+                            categories.map((category, index) => (
+                                <>
+                                    <ListGroup.Item
+                                        key={category._id}
+                                        className="mb-4 d-flex  align-items-center justify-content-between"
+                                        onClick={() => handleCategoryClick(category)}
+                                    >
+                                        {category.name}
+                                        {/* <div>
+                                            <button onClick={() => setIsModalIsOpen(true)}     >
+                                                <Trash />
+                                            </button>
+                                        </div> */}
+                                    </ListGroup.Item>
+                                </>
+                            ))}
+                        <FormAddCategory />
+                    </ListGroup>
+                    {/* <FormAddTask /> */}
                 </Col>
 
                 <Col>
@@ -143,7 +173,6 @@ const Home = (props) => {
                                     </ListGroup.Item>
                                     <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={task} />
                                 </>
-
                             ))}
                             <ToastContainer
                             />
