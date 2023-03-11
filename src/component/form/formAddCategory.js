@@ -13,7 +13,9 @@ const FormAddCategory = (props) => {
         addCategory({ name: name })
             .then(response => {
                 setName("");
+                window.location.reload(false);
             })
+            
     }
 
     // const handleChange = (event) => {

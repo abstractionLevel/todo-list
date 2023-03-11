@@ -34,20 +34,26 @@ const Home = (props) => {
     const onClickPriority = (value) => {
         getTasksByPriority(value)
             .then(response => {
-                setTasks(response);
+                if (response.length > 0) {
+                    console.log("response ", response)
+                    setTasks(response);
+                }
             })
+
     }
 
     const onClickAll = async () => {
-        await getAllTasks()
+        await getAllTasks(category._id)
             .then(response => {
-                setTasks(response)
+                if (response.length > 0) {
+                    setTasks(response)
+                }
+
             });
     }
 
     const handleCategoryClick = (category) => {
         setCategory(category)
-        console.log("categ ", category._id )
         getAllTasks(category._id)
             .then(response => {
                 if (response) {
@@ -60,18 +66,22 @@ const Home = (props) => {
     }
 
     useEffect(() => {
-        const fetchTasks = async () => {
-            const allTasks = await getAllTasks();
-            if (allTasks) {
-                setTasks(allTasks)
-            }
-        };
-        fetchTasks();
-    }, [])
-
-    useEffect(() => {
         getAllCategories()
             .then(response => {
+                response.map(val => {
+                    if (val.name === "Global") {
+                        setCategory(val);
+                        getAllTasks(val._id)
+                            .then(response => {
+                                if (response) {
+                                    setTasks(response)
+                                    setIsToast(false);
+                                } else {
+                                    setTasks([])
+                                }
+                            })
+                    }
+                })
                 setCategories(response);
             })
     }, [])
@@ -106,8 +116,8 @@ const Home = (props) => {
                                     <ListGroup.Item
                                         key={val._id}
                                         className="mb-3 d-flex  align-items-center justify-content-between"
-                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: val._id === category && category._id  ? "#efefef" : null }}
-                                        onClick={() => handleCategoryClick(val)} 
+                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: val._id === category._id ? "#efefef" : null }}
+                                        onClick={() => handleCategoryClick(val)}
                                     >
                                         <span style={{ fontWeight: "bold" }}>{val.name}</span>
                                     </ListGroup.Item>
@@ -181,7 +191,6 @@ const Home = (props) => {
                                                 <Trash />
                                             </button>
                                         </div>
-
                                     </ListGroup.Item>
                                     <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={task} />
                                 </>

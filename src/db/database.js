@@ -6,7 +6,7 @@ const db = new PouchDB('tasks', { auto_compaction: true });
 const dbCatergory = new PouchDB('category', { auto_compaction: true });
 
 dbCatergory.info().then((info) => {
-    if (info.doc_count === 0) { // Verifica se il database è vuoto
+    if (info.doc_count === 0) { // Verifica se il database è vuoto 
         dbCatergory.put({ // Inserisce il record di default
             _id: new Date().toISOString(),
             name: 'Global'
@@ -25,7 +25,7 @@ export const addTask = async (task) => {
             description: task.description,
             isDone: task.isDone,
             priority: task.priority,
-            category_id:task.categoryId
+            category_id: task.categoryId
         });
         return response;
     } catch (error) {
@@ -113,8 +113,8 @@ export const addCategory = async (payload) => {
 
 export const getAllCategories = async () => {
     try {
-        const response =  await dbCatergory.allDocs({ include_docs: true });
-        const categories = response.rows.map(val=>val.doc);
+        const response = await dbCatergory.allDocs({ include_docs: true });
+        const categories = response.rows.map(val => val.doc);
         return categories;
     } catch (error) {
         console.log('Errore durante il recupero dei task: ', error);
