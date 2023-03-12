@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, ListGroup, Form, Badge, Button } from 'react-bootstrap';
 import Header from '../component/header';
 import FormAddTask from '../component/form/formAddTask';
-import { getAllTasks, getTask, modifyTask, getTasksByPriorityAndCategoryId, getAllCategories, deleteTask } from '../db/database';
+import { getAllTasks, getTask, modifyTask, getTasksByPriorityAndCategoryId, getAllCategories, deleteTask, deleteCategoryById } from '../db/database';
 import { Trash } from 'react-bootstrap-icons';
 import ModalDeleteTask from '../component/modalDeleteTask';
 import { GlobalContext } from '../context/globalContext';
@@ -17,10 +17,10 @@ const Home = (props) => {
     const [isModalOpen, setIsModalIsOpen] = useState(false);
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
     const { isToast, setIsToast } = useContext(GlobalContext);
-    const {isUpdateTask,setIsUpdateTask,isUpdateCategory,setIsUpdateCategory} = useContext(GlobalContext);
+    const { isUpdateTask, setIsUpdateTask, isUpdateCategory, setIsUpdateCategory } = useContext(GlobalContext);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
-    const [taskSelected,setTaskSelected]  = useState("");
+    const [taskSelected, setTaskSelected] = useState("");
 
     // const updateTask = (id, isDone) => {
     //     let task = null;
@@ -33,29 +33,28 @@ const Home = (props) => {
     //     fetchTask();
     // }
 
-    const modifyTaskByDone = async (id,isDone) => {
+    const modifyTaskByDone = async (id, isDone) => {
         let task = await getTask(id);
         task.isDone = !isDone;
         modifyTask(task);
         await getAllTasks(task.category_id)
-        .then(response => {
-            if (response.length > 0) {
-                setTasks(response)
-            }
+            .then(response => {
+                if (response.length > 0) {
+                    setTasks(response)
+                }
 
-        });
+            });
     }
 
     const onClickPriority = (value) => {
-        getTasksByPriorityAndCategoryId(value,category._id)
+        getTasksByPriorityAndCategoryId(value, category._id)
             .then(response => {
                 if (response.length > 0) {
-                    console.log("response ", response)
                     setTasks(response);
                 }
             })
     }
-    
+
     const onClickAll = async () => {
         await getAllTasks(category._id)
             .then(response => {
@@ -119,22 +118,29 @@ const Home = (props) => {
     }, [isToast])
 
 
-    useEffect(()=>{
+    useEffect(() => {
         getAllTasks(category && category._id)
-        .then(response => {
-            setIsUpdateTask(false);
-            if (response) {
-                setTasks(response)
-            } else {
-                setTasks([])
-            }
-        });
-        
-    },[isUpdateTask])
+            .then(response => {
+                setIsUpdateTask(false);
+                if (response) {
+                    setTasks(response)
+                } else {
+                    setTasks([])
+                }
+            });
+
+    }, [isUpdateTask])
 
     const deleteTaskOnclick = (task) => {
         setIsModalIsOpen(true);
         setTaskSelected(task);
+    }
+
+    const deleteCategory = (category) => {
+        deleteCategoryById(category)
+            .then(response => {
+                window.location.reload(false);
+            })
     }
 
     return (
@@ -153,6 +159,12 @@ const Home = (props) => {
                                         onClick={() => handleCategoryClick(val)}
                                     >
                                         <span style={{ fontWeight: "bold" }}>{val.name}</span>
+                                        {val.name !== "Global" &&
+                                            <button onClick={() => deleteCategory(val)}>
+                                                <Trash />
+                                            </button>
+                                        }
+
                                     </ListGroup.Item>
                                 </>
                             ))}
@@ -220,7 +232,7 @@ const Home = (props) => {
                                                 onChange={() => modifyTaskByDone(taskVal._id, taskVal.isDone)}
 
                                             />
-                                            <button onClick={()=>deleteTaskOnclick(taskVal)}>
+                                            <button onClick={() => deleteTaskOnclick(taskVal)}>
                                                 <Trash />
                                             </button>
                                         </div>
@@ -241,16 +253,5 @@ const Home = (props) => {
         </Container >
     )
 }
-
-const ShowEmployee = (props) => {
-    return (
-        <>
-            List
-
-        </>
-    )
-}
-
-
 
 export default Home;

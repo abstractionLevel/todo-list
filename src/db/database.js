@@ -42,12 +42,12 @@ export const getTask = async (taskId) => {
     }
 };
 
-export const getTasksByPriorityAndCategoryId = async (value,categoryId) => {
+export const getTasksByPriorityAndCategoryId = async (value, categoryId) => {
     try {
         const response = await db.find({
             selector: { priority: value },
         })
-        const filteredTasks  = response.docs.filter(task=>task.category_id===categoryId);
+        const filteredTasks = response.docs.filter(task => task.category_id === categoryId);
         return filteredTasks;
     } catch (error) {
         console.log('Errore durante la lettura del task: ', error);
@@ -119,5 +119,22 @@ export const getAllCategories = async () => {
         return categories;
     } catch (error) {
         console.log('Errore durante il recupero dei task: ', error);
+    }
+};
+
+export const deleteCategoryById = async (category) => {
+    try {
+        const categoryFetched = await dbCatergory.get(category._id);
+        dbCatergory.remove(categoryFetched);
+        const result = await db.allDocs({ include_docs: true });
+        const taskList = result.rows.map(row => row.doc);
+        const filteredTasks = taskList.filter(task => task.category_id === categoryFetched._id);
+        let response = null;
+        filteredTasks.map(value => {
+            response = db.remove(value);
+        })
+        return response;
+    } catch (error) {
+        console.log('Errore durante la cancellazione: ', error);
     }
 };
