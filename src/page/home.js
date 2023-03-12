@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, ListGroup, Form, Badge, Button } from 'react-bootstrap';
 import Header from '../component/header';
 import FormAddTask from '../component/form/formAddTask';
-import { getAllTasks, getTask, modifyTask, getTasksByPriority, getAllCategories } from '../db/database';
+import { getAllTasks, getTask, modifyTask, getTasksByPriority, getAllCategories, deleteTask } from '../db/database';
 import { Trash } from 'react-bootstrap-icons';
 import ModalDeleteTask from '../component/modalDeleteTask';
 import { GlobalContext } from '../context/globalContext';
@@ -20,6 +20,7 @@ const Home = (props) => {
     const {isUpdateTask,setIsUpdateTask,isUpdateCategory,setIsUpdateCategory} = useContext(GlobalContext);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
+    const [taskSelected,setTaskSelected]  = useState("");
 
     // const updateTask = (id, isDone) => {
     //     let task = null;
@@ -134,6 +135,11 @@ const Home = (props) => {
         
     },[isUpdateTask])
 
+    const deleteTaskOnclick = (task) => {
+        setIsModalIsOpen(true);
+        setTaskSelected(task);
+    }
+
     return (
         <Container >
             <Header title={""} />
@@ -200,38 +206,38 @@ const Home = (props) => {
                                     all
                                 </Badge>
                             </Row>
-                            {tasks.map((task, index) => (
+                            {tasks.map((taskVal, index) => (
                                 <>
-                                    <ListGroup.Item key={task._id} className="mb-4 d-flex  align-items-center justify-content-between"
+                                    <ListGroup.Item key={taskVal._id} className="mb-4 d-flex  align-items-center justify-content-between"
                                         style={{
-                                            textDecoration: task.isDone ? "line-through" : "none",
+                                            textDecoration: taskVal.isDone ? "line-through" : "none",
                                             borderRadius: 0,
-                                            backgroundColor: task.priority === "low" ? "rgba(0, 128, 0, 0.1)" : task.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
+                                            backgroundColor: taskVal.priority === "low" ? "rgba(0, 128, 0, 0.1)" : taskVal.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
                                         }}>
-                                        {task.description}
+                                        {taskVal.description}
                                         <div>
                                             <Form.Check
                                                 inline
                                                 type="checkbox"
-                                                checked={task.isDone}
-                                                onChange={() => modifyTaskByDone(task._id, task.isDone)}
+                                                checked={taskVal.isDone}
+                                                onChange={() => modifyTaskByDone(taskVal._id, taskVal.isDone)}
 
                                             />
-                                            <button onClick={() => setIsModalIsOpen(true)}     >
+                                            <button onClick={()=>deleteTaskOnclick(taskVal)}>
                                                 <Trash />
                                             </button>
                                         </div>
+
                                     </ListGroup.Item>
-                                    <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={task} />
                                 </>
-
-
                             ))}
                             <ToastContainer
                             />
                         </ListGroup>
                         : <div>No taks</div>}
                     <ModalAddTask close={() => setIsAddTaskModalOpen(false)} open={isAddTaskModalOpen} category={category} />
+                    <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={taskSelected} />
+
                 </Col>
             </Row>
 
