@@ -42,12 +42,13 @@ export const getTask = async (taskId) => {
     }
 };
 
-export const getTasksByPriority = async (value) => {
+export const getTasksByPriorityAndCategoryId = async (value,categoryId) => {
     try {
         const response = await db.find({
             selector: { priority: value },
         })
-        return response.docs;
+        const filteredTasks  = response.docs.filter(task=>task.category_id===categoryId);
+        return filteredTasks;
     } catch (error) {
         console.log('Errore durante la lettura del task: ', error);
     }

@@ -26,7 +26,7 @@ const FormAddCategory = (props) => {
         <Form>
             <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Add New Category</Form.Label>
-                <Form.Control type="text" placeholder="Enter Category" value={name} onChange={(event) => setName(event.target.value)} />
+                <Form.Control type="text" placeholder="Type category" value={name} onChange={(event) => setName(event.target.value)} />
             </Form.Group>
             <Button variant="primary" type="submit" onClick={handleSubmit} className="mt-1">
                 Save Category

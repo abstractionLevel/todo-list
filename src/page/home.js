@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, ListGroup, Form, Badge, Button } from 'react-bootstrap';
 import Header from '../component/header';
 import FormAddTask from '../component/form/formAddTask';
-import { getAllTasks, getTask, modifyTask, getTasksByPriority, getAllCategories, deleteTask } from '../db/database';
+import { getAllTasks, getTask, modifyTask, getTasksByPriorityAndCategoryId, getAllCategories, deleteTask } from '../db/database';
 import { Trash } from 'react-bootstrap-icons';
 import ModalDeleteTask from '../component/modalDeleteTask';
 import { GlobalContext } from '../context/globalContext';
@@ -47,18 +47,15 @@ const Home = (props) => {
     }
 
     const onClickPriority = (value) => {
-        getTasksByPriority(value)
+        getTasksByPriorityAndCategoryId(value,category._id)
             .then(response => {
                 if (response.length > 0) {
                     console.log("response ", response)
                     setTasks(response);
                 }
             })
-
     }
-
     
-
     const onClickAll = async () => {
         await getAllTasks(category._id)
             .then(response => {

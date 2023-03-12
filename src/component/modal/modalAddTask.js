@@ -9,13 +9,13 @@ import { addTask } from "../../db/database";
 const ModalAddTask = (props) => {
 
     const [description, setDescription] = useState(null);
-    const [priority, setPriority] = useState('low');
+    const [priority, setPriority] = useState(null);
     const {setIsUpdateTask} = useContext(GlobalContext);
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (description) {
+        if (description && priority) {
             const task = {
                 "description": description,
                 "isDone": 0,
