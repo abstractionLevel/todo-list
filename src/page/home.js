@@ -17,19 +17,32 @@ const Home = (props) => {
     const [isModalOpen, setIsModalIsOpen] = useState(false);
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
     const { isToast, setIsToast } = useContext(GlobalContext);
-    const {isUpdateTask,setIsUpdateTask} = useContext(GlobalContext);
+    const {isUpdateTask,setIsUpdateTask,isUpdateCategory,setIsUpdateCategory} = useContext(GlobalContext);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
 
-    const updateTask = (id, isDone) => {
-        let task = null;
-        let fetchTask = async () => {
-            task = await getTask(id);
-            task.isDone = !isDone
-            modifyTask(task);
-            window.location.reload(false);
-        }
-        fetchTask();
+    // const updateTask = (id, isDone) => {
+    //     let task = null;
+    //     let fetchTask = async () => {
+    //         task = await getTask(id);
+    //         task.isDone = !isDone
+    //         modifyTask(task);
+    //         window.location.reload(false);
+    //     }
+    //     fetchTask();
+    // }
+
+    const modifyTaskByDone = async (id,isDone) => {
+        let task = await getTask(id);
+        task.isDone = !isDone;
+        modifyTask(task);
+        await getAllTasks(task.category_id)
+        .then(response => {
+            if (response.length > 0) {
+                setTasks(response)
+            }
+
+        });
     }
 
     const onClickPriority = (value) => {
@@ -42,6 +55,8 @@ const Home = (props) => {
             })
 
     }
+
+    
 
     const onClickAll = async () => {
         await getAllTasks(category._id)
@@ -144,7 +159,7 @@ const Home = (props) => {
                 <Col>
                     {category &&
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
-                            <p>task for category: {category.name}</p>
+                            <p>tasks for the category: <b>{category.name}</b></p>
                             <Button variant="primary" type="submit" className="mt-1" onClick={() => setIsAddTaskModalOpen(true)}>
                                 Add Task
                             </Button>
@@ -199,7 +214,7 @@ const Home = (props) => {
                                                 inline
                                                 type="checkbox"
                                                 checked={task.isDone}
-                                                onChange={() => updateTask(task._id, task.isDone)}
+                                                onChange={() => modifyTaskByDone(task._id, task.isDone)}
 
                                             />
                                             <button onClick={() => setIsModalIsOpen(true)}     >
