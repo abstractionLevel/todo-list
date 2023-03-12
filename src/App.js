@@ -10,9 +10,10 @@ function App() {
 
 	const [isToast, setIsToast] = useState(false);
 	const [isUpdateTask, setIsUpdateTask] = useState(false);
+	const [isUpdateCategory,setIsUpdateCategory] = useState(false)
 
 	return (
-		<GlobalContext.Provider value={{ isToast, setIsToast, isUpdateTask, setIsUpdateTask }}>
+		<GlobalContext.Provider value={{ isToast, setIsToast, isUpdateTask, setIsUpdateTask ,setIsUpdateCategory,isUpdateCategory}}>
 			<HashRouter>
 				<Routes>
 					<Route path="/" element={<Home />} />

@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import FormAddCategory from '../component/form/formAddCategory';
 import 'react-toastify/dist/ReactToastify.css';
 import ModalAddTask from '../component/modal/modalAddTask';
+import ModalDeleteCategory from '../component/modal/modalDeleteCategory';
 
 const Home = (props) => {
 
@@ -21,17 +22,9 @@ const Home = (props) => {
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
     const [taskSelected, setTaskSelected] = useState("");
+    const [isModalDeleteCategoryOpen, setIsModalDeleteCategoryOpen] = useState(false);
+    const [categorySelected,setCategorySelected] = useState();
 
-    // const updateTask = (id, isDone) => {
-    //     let task = null;
-    //     let fetchTask = async () => {
-    //         task = await getTask(id);
-    //         task.isDone = !isDone
-    //         modifyTask(task);
-    //         window.location.reload(false);
-    //     }
-    //     fetchTask();
-    // }
 
     const modifyTaskByDone = async (id, isDone) => {
         let task = await getTask(id);
@@ -82,7 +75,7 @@ const Home = (props) => {
         getAllCategories()
             .then(response => {
                 response.map(val => {
-                    if (val.name === "Global") {
+                    if (val.name === "Global") {//prendo i tasks di Global per farli vedere a schermo come category di default
                         setCategory(val);
                         getAllTasks(val._id)
                             .then(response => {
@@ -102,7 +95,7 @@ const Home = (props) => {
     useEffect(() => {
         if (isToast) {
             setIsUpdateTask(true); //aggiorno i tasks
-            toast('🦄 Task Deleted !!', {
+            toast('🦄 Operazione completata !!', {
                 position: "bottom-right",
                 autoClose: 1000,
                 hideProgressBar: false,
@@ -131,16 +124,50 @@ const Home = (props) => {
 
     }, [isUpdateTask])
 
+    useEffect(() => {
+        if(isUpdateCategory) {
+            toast('🦄 Categoria cancellata !!', {
+                position: "bottom-right",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            getAllCategories()
+                .then(response => {
+                    response.map(val => {
+                        if (val.name === "Global") {
+                            setCategory(val);
+                            getAllTasks(val._id)
+                                .then(response => {
+                                    if (response) {
+                                        setTasks(response)
+                                        setIsToast(false);
+                                    } else {
+                                        setTasks([])
+                                    }
+                                })
+                        }
+                    })
+                    setCategories(response);
+                })
+                setIsUpdateCategory(false);
+                setIsModalDeleteCategoryOpen(false);
+        }
+       
+    }, [isUpdateCategory])
+
     const deleteTaskOnclick = (task) => {
         setIsModalIsOpen(true);
         setTaskSelected(task);
     }
 
     const deleteCategory = (category) => {
-        deleteCategoryById(category)
-            .then(response => {
-                window.location.reload(false);
-            })
+        setIsModalDeleteCategoryOpen(true);
+        setCategory(category);
     }
 
     return (
@@ -246,7 +273,7 @@ const Home = (props) => {
                         : <div>No taks</div>}
                     <ModalAddTask close={() => setIsAddTaskModalOpen(false)} open={isAddTaskModalOpen} category={category} />
                     <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={taskSelected} />
-
+                    <ModalDeleteCategory  close={() => setIsModalDeleteCategoryOpen(false)} open={isModalDeleteCategoryOpen} category={category} />
                 </Col>
             </Row>
 
