@@ -17,6 +17,7 @@ const Home = (props) => {
     const [isModalOpen, setIsModalIsOpen] = useState(false);
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
     const { isToast, setIsToast } = useContext(GlobalContext);
+    const {isUpdateTask,setIsUpdateTask} = useContext(GlobalContext);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
 
@@ -88,6 +89,7 @@ const Home = (props) => {
 
     useEffect(() => {
         if (isToast) {
+            setIsUpdateTask(true); //aggiorno i tasks
             toast('🦄 Task Deleted !!', {
                 position: "bottom-right",
                 autoClose: 1000,
@@ -98,11 +100,24 @@ const Home = (props) => {
                 progress: undefined,
                 theme: "colored",
             });
+            setIsToast(false);
         }
 
     }, [isToast])
 
 
+    useEffect(()=>{
+        getAllTasks(category && category._id)
+        .then(response => {
+            setIsUpdateTask(false);
+            if (response) {
+                setTasks(response)
+            } else {
+                setTasks([])
+            }
+        });
+        
+    },[isUpdateTask])
 
     return (
         <Container >

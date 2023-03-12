@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import { GlobalContext } from '../../context/globalContext';
 import { addTask } from "../../db/database";
 
 
@@ -9,6 +10,7 @@ const ModalAddTask = (props) => {
 
     const [description, setDescription] = useState(null);
     const [priority, setPriority] = useState('low');
+    const {setIsUpdateTask} = useContext(GlobalContext);
 
 
     const handleSubmit = async (e) => {
@@ -22,7 +24,8 @@ const ModalAddTask = (props) => {
             }
             await addTask(task);
             setDescription("");
-            window.location.reload(false);
+            setIsUpdateTask(true)
+            props.close();
         }
 
     }

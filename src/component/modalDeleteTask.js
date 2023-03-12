@@ -13,8 +13,8 @@ const ModalDeleteTask = (props) => {
        
         removeTaskById(props.task._id)
             .then(resp => {
-                props.close();
                 setIsToast(true)
+                props.close();
             })
     }
 
