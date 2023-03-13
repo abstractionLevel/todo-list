@@ -95,7 +95,7 @@ const Home = (props) => {
     useEffect(() => {
         if (isToast) {
             setIsUpdateTask(true); //aggiorno i tasks
-            toast('🦄 Operazione completata !!', {
+            toast('🦄 Task cancellato !!', {
                 position: "bottom-right",
                 autoClose: 1000,
                 hideProgressBar: false,

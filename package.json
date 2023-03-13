@@ -86,19 +86,13 @@
   },
   "build": {
     "generateUpdatesFilesForAllChannels": true,
-    "appId": "cinarrtolga.electronapp",
-    "productName": "React Electron App",
-    "copyright": "Cinarrtolga",
+    "appId": "ugoDeLucia.electronapp",
+    "productName": "TodoApp ",
+    "copyright": "",
     "mac": {
       "publish": {
         "provider": "github",
-        "owner": "cinarrtolga",
-        "repo": "ART-React-Electron-App"
-      }
-    },
-    "win": {
-      "win": {
-        "icon": ""
+        "owner": "ugo de lucia"
       }
     },
     "files": [

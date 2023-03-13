@@ -34,7 +34,7 @@ const createWindow = () => {
         // Scrivi il messaggio di log nel file di log
         log.info(`[Renderer] [${level}] ${message}`);
     });
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     if (isDev) {
         mainWindow.loadURL('http://localhost:3000');
