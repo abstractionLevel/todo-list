@@ -23,7 +23,7 @@ const Home = (props) => {
     const [category, setCategory] = useState(null);
     const [taskSelected, setTaskSelected] = useState("");
     const [isModalDeleteCategoryOpen, setIsModalDeleteCategoryOpen] = useState(false);
-    const [categorySelected,setCategorySelected] = useState();
+    const [categorySelected, setCategorySelected] = useState();
 
 
     const modifyTaskByDone = async (id, isDone) => {
@@ -125,7 +125,7 @@ const Home = (props) => {
     }, [isUpdateTask])
 
     useEffect(() => {
-        if(isUpdateCategory) {
+        if (isUpdateCategory) {
             toast('🦄 Categoria cancellata !!', {
                 position: "bottom-right",
                 autoClose: 1000,
@@ -154,10 +154,10 @@ const Home = (props) => {
                     })
                     setCategories(response);
                 })
-                setIsUpdateCategory(false);
-                setIsModalDeleteCategoryOpen(false);
+            setIsUpdateCategory(false);
+            setIsModalDeleteCategoryOpen(false);
         }
-       
+
     }, [isUpdateCategory])
 
     const deleteTaskOnclick = (task) => {
@@ -244,26 +244,30 @@ const Home = (props) => {
                             </Row>
                             {tasks.map((taskVal, index) => (
                                 <>
-                                    <ListGroup.Item key={taskVal._id} className="mb-4 d-flex  align-items-center justify-content-between"
+                                    <ListGroup.Item key={taskVal._id} className="mb-4"
                                         style={{
                                             textDecoration: taskVal.isDone ? "line-through" : "none",
                                             borderRadius: 0,
                                             backgroundColor: taskVal.priority === "low" ? "rgba(0, 128, 0, 0.1)" : taskVal.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
                                         }}>
-                                        {taskVal.description}
-                                        <div>
-                                            <Form.Check
-                                                inline
-                                                type="checkbox"
-                                                checked={taskVal.isDone}
-                                                onChange={() => modifyTaskByDone(taskVal._id, taskVal.isDone)}
+                                        <Row >
+                                            <Col sm={9} xs={9}>
+                                                {taskVal.description}
+                                            </Col>
+                                            <Col sm={3} xs={3}  className="d-flex justify-content-end align-items-center">
+                                                <Form.Check
+                                                    inline
+                                                    type="checkbox"
+                                                    checked={taskVal.isDone}
+                                                    onChange={() => modifyTaskByDone(taskVal._id, taskVal.isDone)}
 
-                                            />
-                                            <button onClick={() => deleteTaskOnclick(taskVal)}>
-                                                <Trash />
-                                            </button>
-                                        </div>
+                                                />
+                                                <button onClick={() => deleteTaskOnclick(taskVal)}>
+                                                    <Trash />
+                                                </button>
+                                            </Col>
 
+                                        </Row>
                                     </ListGroup.Item>
                                 </>
                             ))}
@@ -273,7 +277,7 @@ const Home = (props) => {
                         : <div>No taks</div>}
                     <ModalAddTask close={() => setIsAddTaskModalOpen(false)} open={isAddTaskModalOpen} category={category} />
                     <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={taskSelected} />
-                    <ModalDeleteCategory  close={() => setIsModalDeleteCategoryOpen(false)} open={isModalDeleteCategoryOpen} category={category} />
+                    <ModalDeleteCategory close={() => setIsModalDeleteCategoryOpen(false)} open={isModalDeleteCategoryOpen} category={category} />
                 </Col>
             </Row>
 
