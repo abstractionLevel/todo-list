@@ -274,7 +274,7 @@ const Home = (props) => {
                             <ToastContainer
                             />
                         </ListGroup>
-                        : <div>No taks</div>}
+                        : <div>No task</div>}
                     <ModalAddTask close={() => setIsAddTaskModalOpen(false)} open={isAddTaskModalOpen} category={category} />
                     <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={taskSelected} />
                     <ModalDeleteCategory close={() => setIsModalDeleteCategoryOpen(false)} open={isModalDeleteCategoryOpen} category={category} />
