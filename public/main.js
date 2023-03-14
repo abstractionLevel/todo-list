@@ -13,6 +13,8 @@ const createWindow = () => {
     const mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
+        minHeight: 600,  // Imposta l'altezza minima della finestra a 400 pixel
+        minWidth: 800,  
         icon: path.join(__dirname, '/icon.png'),
         webPreferences: {
             enableRemoteModuel: true

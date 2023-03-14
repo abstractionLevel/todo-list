@@ -174,31 +174,36 @@ const Home = (props) => {
         <Container >
             <Header title={""} />
             <Row>
-                <Col md={4}>
+                <Col sm={4} xs={4}>
                     <ListGroup>
                         {categories.length > 0 &&
                             categories.map((val, index) => (
                                 <>
                                     <ListGroup.Item
                                         key={val._id}
-                                        className="mb-3 d-flex  align-items-center justify-content-between"
+                                        className="mb-3"
                                         style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: val._id === category._id ? "#efefef" : null }}
                                         onClick={() => handleCategoryClick(val)}
                                     >
-                                        <span style={{ fontWeight: "bold" }}>{val.name}</span>
-                                        {val.name !== "Global" &&
-                                            <button onClick={() => deleteCategory(val)}>
-                                                <Trash />
-                                            </button>
-                                        }
-
-                                    </ListGroup.Item>
+                                        <Row >
+                                            <Col sm={10} xs={10}>
+                                                <div style={{ wordWrap: "break-word" }}> <span style={{ fontWeight: "bold" }}>{val.name}</span></div>
+                                            </Col>
+                                            <Col sm={2} xs={2} className="d-flex justify-content-end align-items-center">
+                                                {val.name !== "Global" &&
+                                                    <button onClick={() => deleteCategory(val)}>
+                                                        <Trash />
+                                                    </button>
+                                                }
+                                            </Col>
+                                        </Row>
+                                    </ListGroup.Item> 
                                 </>
                             ))}
                         <FormAddCategory />
                     </ListGroup>
                 </Col>
-                <Col>
+                <Col sm={8} xs={8}>
                     {category &&
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <p>tasks for the category: <b>{category.name}</b></p>
@@ -252,9 +257,9 @@ const Home = (props) => {
                                         }}>
                                         <Row >
                                             <Col sm={9} xs={9}>
-                                                {taskVal.description}
+                                                <div style={{ wordWrap: "break-word" }}>{taskVal.description}</div>
                                             </Col>
-                                            <Col sm={3} xs={3}  className="d-flex justify-content-end align-items-center">
+                                            <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
                                                 <Form.Check
                                                     inline
                                                     type="checkbox"
