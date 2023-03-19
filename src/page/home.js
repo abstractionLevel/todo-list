@@ -186,18 +186,17 @@ const Home = (props) => {
                                         onClick={() => handleCategoryClick(val)}
                                     >
                                         <Row >
-                                            <Col sm={10} xs={10}>
+                                            <Col sm={9} xs={9}>
                                                 <div style={{ wordWrap: "break-word" }}> <span style={{ fontWeight: "bold" }}>{val.name}</span></div>
                                             </Col>
-                                            <Col sm={2} xs={2} className="d-flex justify-content-end align-items-center">
+                                            <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
                                                 {val.name !== "Global" &&
-                                                    <button onClick={() => deleteCategory(val)}>
-                                                        <Trash />
-                                                    </button>
+                                                    <Trash onClick={() => deleteCategory(val)} style={{ width: '18px', height: '18px' }} />
                                                 }
                                             </Col>
+
                                         </Row>
-                                    </ListGroup.Item> 
+                                    </ListGroup.Item>
                                 </>
                             ))}
                         <FormAddCategory />
@@ -267,9 +266,7 @@ const Home = (props) => {
                                                     onChange={() => modifyTaskByDone(taskVal._id, taskVal.isDone)}
 
                                                 />
-                                                <button onClick={() => deleteTaskOnclick(taskVal)}>
-                                                    <Trash />
-                                                </button>
+                                                <Trash onClick={() => deleteTaskOnclick(taskVal)} />
                                             </Col>
 
                                         </Row>
