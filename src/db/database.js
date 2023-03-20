@@ -114,13 +114,37 @@ export const addCategory = async (payload) => {
     }
 };
 
+export const getAllCategoriesWidthTask = async () => {
+    try {
+        let response = []
+        const responseCategories = await dbCatergory.allDocs({include_docs:true});
+        const responseTasks = await db.allDocs({ include_docs: true });
+        const categories = responseCategories.rows.map(val => val.doc);
+        const tasks = responseTasks.rows.map(val => val.doc);
+        categories.map(category=>{
+            let result = []
+            tasks.map(task=>{
+                if(task.category_id === category._id) {
+                    result.push(task)
+                }
+            })
+            let taskCompleted = result.filter(res=>res.isDone!==false)
+            response.push({category:category,task:result,totalTask:result.length,completed:taskCompleted.length});
+            result = [];
+        });
+        return response;
+    }catch(error) {
+        console.log("Errore durante il recupero delle categorie ",error)
+    }
+}
+
 export const getAllCategories = async () => {
     try {
         const response = await dbCatergory.allDocs({ include_docs: true });
         const categories = response.rows.map(val => val.doc);
         return categories;
     } catch (error) {
-        console.log('Errore durante il recupero dei task: ', error);
+        console.log('Errore durante il recupero delle categorie: ', error);
     }
 };
 

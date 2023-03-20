@@ -18,7 +18,7 @@ const ModalAddTask = (props) => {
         if (description && priority) {
             const task = {
                 "description": description,
-                "isDone": 0,
+                "isDone": false,
                 "priority": priority,
                 "categoryId": props.category && props.category._id
             }

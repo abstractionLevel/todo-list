@@ -4,16 +4,18 @@ import Modal from 'react-bootstrap/Modal';
 import { Toast } from 'react-bootstrap';
 import { removeTaskById } from '../db/database';
 import { GlobalContext } from '../context/globalContext';
+import { openToast } from '../service/openToast';
 
 const ModalDeleteTask = (props) => {
 
-    const { isToast, setIsToast } = useContext(GlobalContext);
+    const {setIsUpdateTask } = useContext(GlobalContext);
 
     const onClickDelete = () => {
+        openToast("task cancellato")
         removeTaskById(props.task._id)
             .then(resp => {
-                setIsToast(true)
                 props.close();
+                setIsUpdateTask(true);
             })
     }
 

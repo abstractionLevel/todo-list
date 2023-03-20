@@ -4,7 +4,8 @@ import Home from './page/home';
 import React, { useState, useEffect } from 'react';
 import { GlobalContext } from './context/globalContext';
 import { initDb } from './db/database';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
@@ -15,17 +16,32 @@ function App() {
 	const [isRender, setIsRender] = useState(false);
 
 
-	useEffect(()=>{
+	useEffect(() => {
+		window.addEventListener("openToast", (event) => {
+			toast(event.detail.message, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+
+		})
 		initDb()
-			.then((resp)=>{
+			.then((resp) => {
 				setIsRender(true);
 			})
-	},[]);
+	}, []);
 
 	return (
 		<>
+			<ToastContainer />
 			{isRender && (
 				<GlobalContext.Provider value={{ isToast, setIsToast, isUpdateTask, setIsUpdateTask, setIsUpdateCategory, isUpdateCategory }}>
+
 					<HashRouter>
 						<Routes>
 							<Route path="/" element={<Home />} />

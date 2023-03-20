@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, ListGroup, Form, Badge, Button } from 'react-bootstrap';
 import Header from '../component/header';
-import FormAddTask from '../component/form/formAddTask';
-import { getAllTasks, getTask, modifyTask, getTasksByPriorityAndCategoryId, getAllCategories, deleteTask, deleteCategoryById } from '../db/database';
+import { getAllTasks, getTask, modifyTask, getTasksByPriorityAndCategoryId, getAllCategories, deleteTask, deleteCategoryById, getAllCategoriesWidthTask } from '../db/database';
 import { Trash } from 'react-bootstrap-icons';
 import ModalDeleteTask from '../component/modalDeleteTask';
 import { GlobalContext } from '../context/globalContext';
-import { ToastContainer, toast } from 'react-toastify';
 import FormAddCategory from '../component/form/formAddCategory';
-import 'react-toastify/dist/ReactToastify.css';
 import ModalAddTask from '../component/modal/modalAddTask';
 import ModalDeleteCategory from '../component/modal/modalDeleteCategory';
 
@@ -17,13 +14,11 @@ const Home = (props) => {
     const [tasks, setTasks] = useState([]);
     const [isModalOpen, setIsModalIsOpen] = useState(false);
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
-    const { isToast, setIsToast } = useContext(GlobalContext);
     const { isUpdateTask, setIsUpdateTask, isUpdateCategory, setIsUpdateCategory } = useContext(GlobalContext);
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState(null);
     const [taskSelected, setTaskSelected] = useState("");
     const [isModalDeleteCategoryOpen, setIsModalDeleteCategoryOpen] = useState(false);
-    const [categorySelected, setCategorySelected] = useState();
 
 
     const modifyTaskByDone = async (id, isDone) => {
@@ -64,7 +59,6 @@ const Home = (props) => {
             .then(response => {
                 if (response) {
                     setTasks(response)
-                    setIsToast(false);
                 } else {
                     setTasks([])
                 }
@@ -72,20 +66,11 @@ const Home = (props) => {
     }
 
     useEffect(() => {
-        getAllCategories()
+        getAllCategoriesWidthTask()
             .then(response => {
-                response.map(val => {
-                    if (val.name === "Global") {//prendo i tasks di Global per farli vedere a schermo come category di default
-                        setCategory(val);
-                        getAllTasks(val._id)
-                            .then(response => {
-                                if (response) {
-                                    setTasks(response)
-                                    setIsToast(false);
-                                } else {
-                                    setTasks([])
-                                }
-                            })
+                response.map(result => {
+                    if (result.category.name === "Global") {
+                        setTasks(result.task)
                     }
                 })
                 setCategories(response);
@@ -93,30 +78,12 @@ const Home = (props) => {
     }, [])
 
     useEffect(() => {
-        if (isToast) {
-            setIsUpdateTask(true); //aggiorno i tasks
-            toast('🦄 Task cancellato !!', {
-                position: "bottom-right",
-                autoClose: 1000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-            setIsToast(false);
-        }
-
-    }, [isToast])
-
-
-    useEffect(() => {
         getAllTasks(category && category._id)
             .then(response => {
                 setIsUpdateTask(false);
                 if (response) {
                     setTasks(response)
+
                 } else {
                     setTasks([])
                 }
@@ -126,18 +93,9 @@ const Home = (props) => {
 
     useEffect(() => {
         if (isUpdateCategory) {
-            toast('🦄 Categoria cancellata !!', {
-                position: "bottom-right",
-                autoClose: 1000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
             getAllCategories()
                 .then(response => {
+                    setCategories(response)
                     response.map(val => {
                         if (val.name === "Global") {
                             setCategory(val);
@@ -145,15 +103,20 @@ const Home = (props) => {
                                 .then(response => {
                                     if (response) {
                                         setTasks(response)
-                                        setIsToast(false);
                                     } else {
                                         setTasks([])
                                     }
                                 })
+                                .catch(error => {
+                                    console.error("Error fetching tasks", error);
+                                });
                         }
                     })
-                    setCategories(response);
+                   
                 })
+                .catch(error => {
+                    console.error("Error fetching categories", error);
+                });
             setIsUpdateCategory(false);
             setIsModalDeleteCategoryOpen(false);
         }
@@ -169,7 +132,7 @@ const Home = (props) => {
         setIsModalDeleteCategoryOpen(true);
         setCategory(category);
     }
-
+console.log(categories)
     return (
         <Container >
             <Header title={""} />
@@ -177,22 +140,26 @@ const Home = (props) => {
                 <Col sm={4} xs={4}>
                     <ListGroup>
                         {categories.length > 0 &&
-                            categories.map((val, index) => (
+                            categories.map((result, index) => (
                                 <>
                                     <ListGroup.Item
-                                        key={val._id}
+                                        key={result.category._id}
                                         className="mb-3"
-                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: val._id === category._id ? "#efefef" : null }}
-                                        onClick={() => handleCategoryClick(val)}
+                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: result.category._id === (category && category._id)  ? "#efefef" : null }}
+                                        onClick={() => handleCategoryClick(result.category)}
                                     >
                                         <Row >
                                             <Col sm={9} xs={9}>
-                                                <div style={{ wordWrap: "break-word" }}> <span style={{ fontWeight: "bold" }}>{val.name}</span></div>
+                                                <div style={{ wordWrap: "break-word" }}> <span style={{ fontWeight: "bold" }}>{result.category.name}</span></div>
                                             </Col>
+
                                             <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
-                                                {val.name !== "Global" &&
-                                                    <Trash onClick={() => deleteCategory(val)} style={{ width: '18px', height: '18px' }} />
-                                                }
+                                                <div>
+                                                    {result.completed + "/" + result.totalTask}
+                                                </div>
+                                                {/* {result.category.name !== "Global" &&
+                                                    <Trash onClick={() => deleteCategory(result.category)} style={{ width: '18px', height: '18px' }} />
+                                                } */}
                                             </Col>
 
                                         </Row>
@@ -206,9 +173,17 @@ const Home = (props) => {
                     {category &&
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <p>tasks for the category: <b>{category.name}</b></p>
-                            <Button variant="primary" type="submit" className="mt-1" onClick={() => setIsAddTaskModalOpen(true)}>
-                                Add Task
-                            </Button>
+                            <div>
+                                {category.name !== "Global" &&
+                                    <Button variant="secondary" type="submit" className="mt-1 " style={{ marginRight: 20 }} size="sm" onClick={() => deleteCategory(category)}>
+                                        Delete Category
+                                    </Button>
+                                }
+
+                                <Button variant="primary" type="submit" className="mt-1" onClick={() => setIsAddTaskModalOpen(true)} size="sm">
+                                    Add Task
+                                </Button>
+                            </div>
                         </div>
                     }
                     <div style={{ borderBottom: "1px solid black", marginBottom: "10px", marginTop: "10px" }}>
@@ -273,8 +248,6 @@ const Home = (props) => {
                                     </ListGroup.Item>
                                 </>
                             ))}
-                            <ToastContainer
-                            />
                         </ListGroup>
                         : <div>No task</div>}
                     <ModalAddTask close={() => setIsAddTaskModalOpen(false)} open={isAddTaskModalOpen} category={category} />
