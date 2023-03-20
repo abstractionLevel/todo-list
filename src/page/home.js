@@ -148,7 +148,7 @@ const Home = (props) => {
         setIsModalDeleteCategoryOpen(true);
         setCategory(category);
     }
-    console.log(categories)
+
     return (
         <Container >
             <Header title={""} />

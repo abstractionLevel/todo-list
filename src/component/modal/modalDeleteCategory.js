@@ -14,7 +14,7 @@ const ModalDeleteCategory = (props) => {
         deleteCategoryById(props.category)
             .then(response => {
                setIsUpdateCategory(true);
-               
+               props.close();
             })
     }
 
