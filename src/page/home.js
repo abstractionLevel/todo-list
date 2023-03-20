@@ -75,7 +75,24 @@ const Home = (props) => {
                 })
                 setCategories(response);
             })
-    }, [])
+    }, [isUpdateCategory])
+
+    useEffect(() => {
+        if (isUpdateCategory) {
+            getAllTasks(category && category._id)
+                .then(response => {
+                    setIsUpdateTask(false);
+                    if (response) {
+                        setTasks(response)
+
+                    } else {
+                        setTasks([])
+                    }
+                });
+            setIsUpdateCategory(false);
+            setIsModalDeleteCategoryOpen(false);
+        }
+    }, [isUpdateTask])
 
     useEffect(() => {
         getAllTasks(category && category._id)
@@ -88,40 +105,39 @@ const Home = (props) => {
                     setTasks([])
                 }
             });
+    }, [])
 
-    }, [isUpdateTask])
+    // useEffect(() => {
+    //     if (isUpdateCategory) {
+    //         getAllCategories()
+    //             .then(response => {
+    //                 setCategories(response)
+    //                 response.map(val => {
+    //                     if (val.name === "Global") {
+    //                         setCategory(val);
+    //                         getAllTasks(val._id)
+    //                             .then(response => {
+    //                                 if (response) {
+    //                                     setTasks(response)
+    //                                 } else {
+    //                                     setTasks([])
+    //                                 }
+    //                             })
+    //                             .catch(error => {
+    //                                 console.error("Error fetching tasks", error);
+    //                             });
+    //                     }
+    //                 })
 
-    useEffect(() => {
-        if (isUpdateCategory) {
-            getAllCategories()
-                .then(response => {
-                    setCategories(response)
-                    response.map(val => {
-                        if (val.name === "Global") {
-                            setCategory(val);
-                            getAllTasks(val._id)
-                                .then(response => {
-                                    if (response) {
-                                        setTasks(response)
-                                    } else {
-                                        setTasks([])
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error("Error fetching tasks", error);
-                                });
-                        }
-                    })
-                   
-                })
-                .catch(error => {
-                    console.error("Error fetching categories", error);
-                });
-            setIsUpdateCategory(false);
-            setIsModalDeleteCategoryOpen(false);
-        }
+    //             })
+    //             .catch(error => {
+    //                 console.error("Error fetching categories", error);
+    //             });
+    //         setIsUpdateCategory(false);
+    //         setIsModalDeleteCategoryOpen(false);
+    //     }
 
-    }, [isUpdateCategory])
+    // }, [isUpdateCategory])
 
     const deleteTaskOnclick = (task) => {
         setIsModalIsOpen(true);
@@ -132,7 +148,7 @@ const Home = (props) => {
         setIsModalDeleteCategoryOpen(true);
         setCategory(category);
     }
-console.log(categories)
+    console.log(categories)
     return (
         <Container >
             <Header title={""} />
@@ -145,7 +161,7 @@ console.log(categories)
                                     <ListGroup.Item
                                         key={result.category._id}
                                         className="mb-3"
-                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: result.category._id === (category && category._id)  ? "#efefef" : null }}
+                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: result.category._id === (category && category._id) ? "#efefef" : null }}
                                         onClick={() => handleCategoryClick(result.category)}
                                     >
                                         <Row >
