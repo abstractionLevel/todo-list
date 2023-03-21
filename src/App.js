@@ -20,7 +20,7 @@ function App() {
 		window.addEventListener("openToast", (event) => {
 			toast(event.detail.message, {
 				position: "top-right",
-				autoClose: 5000,
+				autoClose: 500,
 				hideProgressBar: false,
 				closeOnClick: true,
 				pauseOnHover: true,

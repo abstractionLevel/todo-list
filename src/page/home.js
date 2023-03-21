@@ -25,13 +25,15 @@ const Home = (props) => {
         let task = await getTask(id);
         task.isDone = !isDone;
         modifyTask(task);
-        await getAllTasks(task.category_id)
+        getAllCategoriesWidthTask()
             .then(response => {
-                if (response.length > 0) {
-                    setTasks(response)
-                }
-
-            });
+                response.map(result => {
+                    if (result.category.name === category.name) {
+                        setTasks(result.task)
+                    }
+                })
+                setCategories(response);
+            })
     }
 
     const onClickPriority = (value) => {
@@ -78,20 +80,16 @@ const Home = (props) => {
     }, [isUpdateCategory])
 
     useEffect(() => {
-        if (isUpdateCategory) {
-            getAllTasks(category && category._id)
-                .then(response => {
-                    setIsUpdateTask(false);
-                    if (response) {
-                        setTasks(response)
-
-                    } else {
-                        setTasks([])
+        getAllCategoriesWidthTask()
+            .then(response => {
+                response.map(result => {
+                    if (result.category.name === category.name) {
+                        setTasks(result.task)
                     }
-                });
-            setIsUpdateCategory(false);
-            setIsModalDeleteCategoryOpen(false);
-        }
+                })
+                setCategories(response);
+                setIsUpdateTask(false)
+            })
     }, [isUpdateTask])
 
     useEffect(() => {
@@ -107,37 +105,7 @@ const Home = (props) => {
             });
     }, [])
 
-    // useEffect(() => {
-    //     if (isUpdateCategory) {
-    //         getAllCategories()
-    //             .then(response => {
-    //                 setCategories(response)
-    //                 response.map(val => {
-    //                     if (val.name === "Global") {
-    //                         setCategory(val);
-    //                         getAllTasks(val._id)
-    //                             .then(response => {
-    //                                 if (response) {
-    //                                     setTasks(response)
-    //                                 } else {
-    //                                     setTasks([])
-    //                                 }
-    //                             })
-    //                             .catch(error => {
-    //                                 console.error("Error fetching tasks", error);
-    //                             });
-    //                     }
-    //                 })
 
-    //             })
-    //             .catch(error => {
-    //                 console.error("Error fetching categories", error);
-    //             });
-    //         setIsUpdateCategory(false);
-    //         setIsModalDeleteCategoryOpen(false);
-    //     }
-
-    // }, [isUpdateCategory])
 
     const deleteTaskOnclick = (task) => {
         setIsModalIsOpen(true);
@@ -173,9 +141,6 @@ const Home = (props) => {
                                                 <div>
                                                     {result.completed + "/" + result.totalTask}
                                                 </div>
-                                                {/* {result.category.name !== "Global" &&
-                                                    <Trash onClick={() => deleteCategory(result.category)} style={{ width: '18px', height: '18px' }} />
-                                                } */}
                                             </Col>
 
                                         </Row>
