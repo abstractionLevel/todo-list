@@ -68,8 +68,7 @@ const Home = (props) => {
     }
 
     useEffect(() => {
-       
-            getAllCategoriesWidthTask()
+        getAllCategoriesWidthTask()
             .then(response => {
                 response.map(result => {
                     if (result.category.name === "Global") {
@@ -82,35 +81,35 @@ const Home = (props) => {
     }, [])
 
     useEffect(() => {
-        if(isUpdateCategory) {
+        if (isUpdateCategory) {
             getAllCategoriesWidthTask()
-            .then(response => {
-                response.map(result => {
-                    if (result.category.name === "Global") {
-                        setTasks(result.task)
-                    }
+                .then(response => {
+                    response.map(result => {
+                        if (result.category.name === "Global") {
+                            setTasks(result.task)
+                        }
+                    })
+                    setCategories(response);
                 })
-                setCategories(response);
-            })
         }
         setIsUpdateCategory(false);
-        
+
     }, [isUpdateCategory])
 
     useEffect(() => {
-        if(isUpdateTask) {
+        if (isUpdateTask) {
             getAllCategoriesWidthTask()
-            .then(response => {
-                response.map(result => {
-                    if (result.category.name === category.name) {
-                        setTasks(result.task)
-                    }
+                .then(response => {
+                    response.map(result => {
+                        if (result.category.name === category.name) {
+                            setTasks(result.task)
+                        }
+                    })
+                    setCategories(response);
+                    setIsUpdateTask(false)
                 })
-                setCategories(response);
-                setIsUpdateTask(false)
-            })
         }
-       
+
     }, [isUpdateTask])
 
     // useEffect(() => {
