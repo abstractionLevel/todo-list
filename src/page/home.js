@@ -68,7 +68,22 @@ const Home = (props) => {
     }
 
     useEffect(() => {
-        getAllCategoriesWidthTask()
+       
+            getAllCategoriesWidthTask()
+            .then(response => {
+                response.map(result => {
+                    if (result.category.name === "Global") {
+                        setTasks(result.task);
+                        setCategory(result.category);
+                    }
+                })
+                setCategories(response);
+            })
+    }, [])
+
+    useEffect(() => {
+        if(isUpdateCategory) {
+            getAllCategoriesWidthTask()
             .then(response => {
                 response.map(result => {
                     if (result.category.name === "Global") {
@@ -77,10 +92,14 @@ const Home = (props) => {
                 })
                 setCategories(response);
             })
+        }
+        setIsUpdateCategory(false);
+        
     }, [isUpdateCategory])
 
     useEffect(() => {
-        getAllCategoriesWidthTask()
+        if(isUpdateTask) {
+            getAllCategoriesWidthTask()
             .then(response => {
                 response.map(result => {
                     if (result.category.name === category.name) {
@@ -90,20 +109,22 @@ const Home = (props) => {
                 setCategories(response);
                 setIsUpdateTask(false)
             })
+        }
+       
     }, [isUpdateTask])
 
-    useEffect(() => {
-        getAllTasks(category && category._id)
-            .then(response => {
-                setIsUpdateTask(false);
-                if (response) {
-                    setTasks(response)
+    // useEffect(() => {
+    //     getAllTasks(category && category._id)
+    //         .then(response => {
+    //             setIsUpdateTask(false);
+    //             if (response) {
+    //                 setTasks(response)
 
-                } else {
-                    setTasks([])
-                }
-            });
-    }, [])
+    //             } else {
+    //                 setTasks([])
+    //             }
+    //         });
+    // }, [])
 
 
 
