@@ -12,7 +12,6 @@ const ModalAddTask = (props) => {
     const [priority, setPriority] = useState(null);
     const {setIsUpdateTask} = useContext(GlobalContext);
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (description && priority) {
@@ -20,7 +19,8 @@ const ModalAddTask = (props) => {
                 "description": description,
                 "isDone": false,
                 "priority": priority,
-                "categoryId": props.category && props.category._id
+                "categoryId": props.category && props.category._id,
+                "position": props.position + 1
             }
             await addTask(task);
             setDescription("");

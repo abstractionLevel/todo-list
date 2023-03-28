@@ -27,7 +27,8 @@ export const addTask = async (task) => {
             description: task.description,
             isDone: task.isDone,
             priority: task.priority,
-            category_id: task.categoryId
+            category_id: task.categoryId,
+            position: task.position
         });
         return response;
     } catch (error) {
@@ -116,7 +117,8 @@ export const addCategory = async (payload) => {
 
 export const getAllCategoriesWidthTask = async () => {
     try {
-        let response = []
+        let response = [];
+        let maxPosition = 0;
         const responseCategories = await dbCatergory.allDocs({ include_docs: true });
         const responseTasks = await db.allDocs({ include_docs: true });
         const categories = responseCategories.rows.map(val => val.doc);
@@ -129,14 +131,16 @@ export const getAllCategoriesWidthTask = async () => {
                 }
             })
             let taskCompleted = result.filter(res => res.isDone !== false)
-            response.push({ category: category, task: result, totalTask: result.length, completed: taskCompleted.length });
+            if (result.length > 0) {
+                maxPosition = result.reduce((acc, cur) => { return acc.position > cur.position ? acc : cur });
+            }
+            response.push({ category: category, task: result, totalTask: result.length, completed: taskCompleted.length, maxPositionTask: maxPosition.position });
             result = [];
         });
-
-        response.forEach(item => {
-            item.task.sort((a, b) =>new Date(b._id) - new Date(a._id));
-        });
-        
+        response.forEach(item=>{
+            item.task.sort((a,b)=> a.position - b.position);
+        })
+        console.log("res ", response)
         return response;
     } catch (error) {
         console.log("Errore durante il recupero delle categorie ", error)
@@ -169,3 +173,9 @@ export const deleteCategoryById = async (category) => {
         console.log('Errore durante la cancellazione: ', error);
     }
 };
+
+
+const updatePositionCategories = (categoryList) => {
+
+
+}

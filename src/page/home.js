@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, ListGroup, Form, Badge, Button } from 'react-bootstrap';
 import Header from '../component/header';
-import { getAllTasks, getTask, modifyTask, getTasksByPriorityAndCategoryId, getAllCategories, deleteTask, deleteCategoryById, getAllCategoriesWidthTask } from '../db/database';
+import { getAllTasks, getTask, modifyTask, getTasksByPriorityAndCategoryId, getAllCategories, deleteTask, deleteCategoryById, getAllCategoriesWidthTask, addTask } from '../db/database';
 import { Trash } from 'react-bootstrap-icons';
 import ModalDeleteTask from '../component/modalDeleteTask';
 import { GlobalContext } from '../context/globalContext';
 import FormAddCategory from '../component/form/formAddCategory';
 import ModalAddTask from '../component/modal/modalAddTask';
 import ModalDeleteCategory from '../component/modal/modalDeleteCategory';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const Home = (props) => {
 
@@ -19,6 +20,7 @@ const Home = (props) => {
     const [category, setCategory] = useState(null);
     const [taskSelected, setTaskSelected] = useState("");
     const [isModalDeleteCategoryOpen, setIsModalDeleteCategoryOpen] = useState(false);
+    const [lastPositionTask, setLastPositionTask] = useState(1);
 
 
     const modifyTaskByDone = async (id, isDone) => {
@@ -71,6 +73,7 @@ const Home = (props) => {
         getAllCategoriesWidthTask()
             .then(response => {
                 response.map(result => {
+                    setLastPositionTask(result.maxPositionTask);;
                     if (result.category.name === "Global") {
                         setTasks(result.task);
                         setCategory(result.category);
@@ -109,23 +112,7 @@ const Home = (props) => {
                     setIsUpdateTask(false)
                 })
         }
-
     }, [isUpdateTask])
-
-    // useEffect(() => {
-    //     getAllTasks(category && category._id)
-    //         .then(response => {
-    //             setIsUpdateTask(false);
-    //             if (response) {
-    //                 setTasks(response)
-
-    //             } else {
-    //                 setTasks([])
-    //             }
-    //         });
-    // }, [])
-
-
 
     const deleteTaskOnclick = (task) => {
         setIsModalIsOpen(true);
@@ -135,6 +122,34 @@ const Home = (props) => {
     const deleteCategory = (category) => {
         setIsModalDeleteCategoryOpen(true);
         setCategory(category);
+    }
+
+    const handleDragEnd = (result) => {
+        // Controllo se l'elemento è stato trascinato in un'altra posizione valida
+        if (!result.destination) {
+            return;
+        }
+        // Copio la lista degli elementi
+        const items = Array.from(tasks);
+        //Rimuovo l'elemento dalla sua posizione precedente
+        const [removed] = items.splice(result.source.index, 1);
+        // Inserisco l'elemento nella nuova posizione
+        items.splice(result.destination.index, 0, removed);
+        // // Aggiorno la lista degli elementi
+        setTasks(items);
+        let position = 1;
+        items.forEach(element=>{//aggiorno i task nel db perposizione
+            element.position = position;
+            position = position + 1;
+            saveTask(element);
+        })
+
+    };
+
+    const saveTask = async (task) => {
+        let taskFetched = await getTask(task._id);
+        taskFetched.position = task.position
+        await modifyTask(taskFetched);
     }
 
     return (
@@ -222,36 +237,51 @@ const Home = (props) => {
                                     all
                                 </Badge>
                             </Row>
-                            {tasks.map((taskVal, index) => (
-                                <>
-                                    <ListGroup.Item key={taskVal._id} className="mb-4"
-                                        style={{
-                                            textDecoration: taskVal.isDone ? "line-through" : "none",
-                                            borderRadius: 0,
-                                            backgroundColor: taskVal.priority === "low" ? "rgba(0, 128, 0, 0.1)" : taskVal.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
-                                        }}>
-                                        <Row >
-                                            <Col sm={9} xs={9}>
-                                                <div style={{ wordWrap: "break-word" }}>{taskVal.description}</div>
-                                            </Col>
-                                            <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
-                                                <Form.Check
-                                                    inline
-                                                    type="checkbox"
-                                                    checked={taskVal.isDone}
-                                                    onChange={() => modifyTaskByDone(taskVal._id, taskVal.isDone)}
+                            <>
+                                <DragDropContext onDragEnd={handleDragEnd}>
+                                    <Droppable droppableId="tasks">
+                                        {(provided) => (
+                                            <ListGroup {...provided.droppableProps} ref={provided.innerRef}>
+                                                {tasks.map((taskVal, index) => (
+                                                    <Draggable key={taskVal._id} draggableId={taskVal._id} index={index}>
+                                                        {(provided) => (
+                                                            <ListGroup.Item key={taskVal._id} className="mb-4"
+                                                                style={{
+                                                                    textDecoration: taskVal.isDone ? "line-through" : "none",
+                                                                    borderRadius: 0,
+                                                                    backgroundColor: taskVal.priority === "low" ? "rgba(0, 128, 0, 0.1)" : taskVal.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
+                                                                }}
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}>
+                                                                <Row >
+                                                                    <Col sm={9} xs={9}>
+                                                                        <div style={{ wordWrap: "break-word" }}>{taskVal.description}</div>
+                                                                    </Col>
+                                                                    <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
+                                                                        <Form.Check
+                                                                            inline
+                                                                            type="checkbox"
+                                                                            checked={taskVal.isDone}
+                                                                            onChange={() => modifyTaskByDone(taskVal._id, taskVal.isDone)}
 
-                                                />
-                                                <Trash onClick={() => deleteTaskOnclick(taskVal)} />
-                                            </Col>
+                                                                        />
+                                                                        <Trash onClick={() => deleteTaskOnclick(taskVal)} />
+                                                                    </Col>
 
-                                        </Row>
-                                    </ListGroup.Item>
-                                </>
-                            ))}
+                                                                </Row>
+                                                            </ListGroup.Item>
+                                                        )}
+                                                    </Draggable>
+                                                ))}
+                                            </ListGroup>
+                                        )}
+                                    </Droppable>
+                                </DragDropContext>
+                            </>
                         </ListGroup>
                         : <div>No task</div>}
-                    <ModalAddTask close={() => setIsAddTaskModalOpen(false)} open={isAddTaskModalOpen} category={category} />
+                    <ModalAddTask close={() => setIsAddTaskModalOpen(false)} open={isAddTaskModalOpen} category={category} position={lastPositionTask} />
                     <ModalDeleteTask close={() => setIsModalIsOpen(false)} open={isModalOpen} task={taskSelected} />
                     <ModalDeleteCategory close={() => setIsModalDeleteCategoryOpen(false)} open={isModalDeleteCategoryOpen} category={category} />
                 </Col>
