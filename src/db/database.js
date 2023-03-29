@@ -126,7 +126,6 @@ export const getAllCategoriesWidthTask = async () => {
         const responseTasks = await db.allDocs({ include_docs: true });
         const categories = responseCategories.rows.map(val => val.doc);
         const tasks = responseTasks.rows.map(val => val.doc);
-        console.log("categories ", categories)
         categories.map(category => {
             let result = []
             tasks.map(task => {
@@ -142,6 +141,9 @@ export const getAllCategoriesWidthTask = async () => {
             response.push({ category: category, task: result, totalTask: result.length, completed: taskCompleted.length, maxPositionTask: maxPosition.position,maxPositionCategory:maxPositionCategory });
             result = [];
         });
+        
+        //setto le categorie e i task per ordine crescente by position
+        response.sort((a,b)=>a.category.position-b.category.position);
         response.forEach(item=>{
             item.task.sort((a,b)=> a.position - b.position);
         })
@@ -178,8 +180,20 @@ export const deleteCategoryById = async (category) => {
     }
 };
 
-
-const updatePositionCategories = (categoryList) => {
-
-
+export const modifyCategory = async (category) => {
+    try {
+        const response = await dbCatergory.put(category);
+        return response;
+    } catch (error) {
+        console.log('Errore durante l\'inserimento della category: ', error);
+    }
 }
+
+export const getCategory = async (categoryId) => {
+    try {
+        const response = await dbCatergory.get(categoryId);
+        return response;
+    } catch (error) {
+        console.log('Errore durante la lettura della category: ', error);
+    }
+};

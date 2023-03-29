@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, ListGroup, Form, Badge, Button } from 'react-bootstrap';
 import Header from '../component/header';
-import { getAllTasks, getTask, modifyTask, getTasksByPriorityAndCategoryId, getAllCategories, deleteTask, deleteCategoryById, getAllCategoriesWidthTask, addTask } from '../db/database';
+import { getAllTasks, getTask, modifyTask, getTasksByPriorityAndCategoryId, getAllCategories, deleteTask, deleteCategoryById, getAllCategoriesWidthTask, addTask, modifyCategory, getCategory } from '../db/database';
 import { Trash } from 'react-bootstrap-icons';
 import ModalDeleteTask from '../component/modalDeleteTask';
 import { GlobalContext } from '../context/globalContext';
@@ -162,17 +162,23 @@ const Home = (props) => {
         // // Aggiorno la lista degli elementi
         setCategories(items);
         let position = 1;
-        // items.forEach(element=>{//aggiorno i task nel db perposizione
-        //     element.position = position;
-        //     position = position + 1;
-        //     saveTask(element);
-        // })
+        items.forEach(element=>{//aggiorno le category nel db per posizione
+            element.position = position;
+            position = position + 1;
+            saveCategory(element);
+        })
     };
 
     const saveTask = async (task) => {
         let taskFetched = await getTask(task._id);
         taskFetched.position = task.position
         await modifyTask(taskFetched);
+    }
+
+    const saveCategory = async (category) => {
+        let categoryFetched = await getCategory(category.category._id);
+        categoryFetched.position = category.position
+        await modifyCategory(categoryFetched);
     }
 
     return (
