@@ -138,12 +138,33 @@ const Home = (props) => {
         // // Aggiorno la lista degli elementi
         setTasks(items);
         let position = 1;
-        items.forEach(element=>{//aggiorno i task nel db perposizione
+        items.forEach(element => {//aggiorno i task nel db perposizione
             element.position = position;
             position = position + 1;
             saveTask(element);
         })
 
+    };
+
+    const handleDragEndCategory = (result) => {
+        // Controllo se l'elemento è stato trascinato in un'altra posizione valida
+        if (!result.destination) {
+            return;
+        }
+        // Copio la lista degli elementi
+        const items = Array.from(categories);
+        //Rimuovo l'elemento dalla sua posizione precedente
+        const [removed] = items.splice(result.source.index, 1);
+        // Inserisco l'elemento nella nuova posizione
+        items.splice(result.destination.index, 0, removed);
+        // // Aggiorno la lista degli elementi
+        setCategories(items);
+        let position = 1;
+        // items.forEach(element=>{//aggiorno i task nel db perposizione
+        //     element.position = position;
+        //     position = position + 1;
+        //     saveTask(element);
+        // })
     };
 
     const saveTask = async (task) => {
@@ -153,41 +174,52 @@ const Home = (props) => {
     }
     const getListStyle = () => ({
         background: "red"
-       
-      });
+
+    });
 
     return (
         <Container >
             <Header title={""} />
             <Row>
                 <Col sm={4} xs={4}>
-                    <ListGroup>
-                        {categories.length > 0 &&
-                            categories.map((result, index) => (
-                                <>
-                                    <ListGroup.Item
-                                        key={result.category._id}
-                                        className="mb-3"
-                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: result.category._id === (category && category._id) ? "#efefef" : null }}
-                                        onClick={() => handleCategoryClick(result.category)}
-                                    >
-                                        <Row >
-                                            <Col sm={9} xs={9}>
-                                                <div style={{ wordWrap: "break-word" }}> <span style={{ fontWeight: "bold" }}>{result.category.name}</span></div>
-                                            </Col>
+                    <DragDropContext onDragEnd={handleDragEndCategory}>
+                        <Droppable droppableId="categories">
+                            {(provided) => (
+                                <ListGroup {...provided.droppableProps} ref={provided.innerRef}>
+                                    {categories.length > 0 &&
+                                        categories.map((result, index) => (
+                                            <Draggable key={result.category._id} draggableId={result.category._id} index={index} style={{ backgroundColor: "red" }}>
+                                                {(provided) => (
+                                                    <ListGroup.Item
+                                                        key={result.category._id}
+                                                        className="mb-3"
+                                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: result.category._id === (category && category._id) ? "#efefef" : null }}
+                                                        onClick={() => handleCategoryClick(result.category)}
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                    >
+                                                        <Row >
+                                                            <Col sm={9} xs={9}>
+                                                                <div style={{ wordWrap: "break-word" }}> <span style={{ fontWeight: "bold" }}>{result.category.name}</span></div>
+                                                            </Col>
 
-                                            <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
-                                                <div>
-                                                    {result.completed + "/" + result.totalTask}
-                                                </div>
-                                            </Col>
+                                                            <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
+                                                                <div>
+                                                                    {result.completed + "/" + result.totalTask}
+                                                                </div>
+                                                            </Col>
 
-                                        </Row>
-                                    </ListGroup.Item>
-                                </>
-                            ))}
-                        <FormAddCategory />
-                    </ListGroup>
+                                                        </Row>
+                                                    </ListGroup.Item>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                    <FormAddCategory />
+                                </ListGroup>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </Col>
                 <Col sm={8} xs={8}>
                     {category &&
@@ -247,7 +279,7 @@ const Home = (props) => {
                                         {(provided) => (
                                             <ListGroup {...provided.droppableProps} ref={provided.innerRef}>
                                                 {tasks.map((taskVal, index) => (
-                                                    <Draggable key={taskVal._id} draggableId={taskVal._id} index={index} style={{backgroundColor:"red"}}>
+                                                    <Draggable key={taskVal._id} draggableId={taskVal._id} index={index} style={{ backgroundColor: "red" }}>
                                                         {(provided) => (
                                                             <ListGroup.Item key={taskVal._id} className="mb-4"
                                                                 // style={{
