@@ -151,6 +151,10 @@ const Home = (props) => {
         taskFetched.position = task.position
         await modifyTask(taskFetched);
     }
+    const getListStyle = () => ({
+        background: "red"
+       
+      });
 
     return (
         <Container >
@@ -243,14 +247,14 @@ const Home = (props) => {
                                         {(provided) => (
                                             <ListGroup {...provided.droppableProps} ref={provided.innerRef}>
                                                 {tasks.map((taskVal, index) => (
-                                                    <Draggable key={taskVal._id} draggableId={taskVal._id} index={index}>
+                                                    <Draggable key={taskVal._id} draggableId={taskVal._id} index={index} style={{backgroundColor:"red"}}>
                                                         {(provided) => (
                                                             <ListGroup.Item key={taskVal._id} className="mb-4"
-                                                                style={{
-                                                                    textDecoration: taskVal.isDone ? "line-through" : "none",
-                                                                    borderRadius: 0,
-                                                                    backgroundColor: taskVal.priority === "low" ? "rgba(0, 128, 0, 0.1)" : taskVal.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
-                                                                }}
+                                                                // style={{
+                                                                //     textDecoration: taskVal.isDone ? "line-through" : "none",
+                                                                //     borderRadius: 0,
+                                                                //     backgroundColor: taskVal.priority === "low" ? "rgba(0, 128, 0, 0.1)!important" : taskVal.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
+                                                                // }}
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
                                                                 {...provided.dragHandleProps}>
@@ -268,7 +272,6 @@ const Home = (props) => {
                                                                         />
                                                                         <Trash onClick={() => deleteTaskOnclick(taskVal)} />
                                                                     </Col>
-
                                                                 </Row>
                                                             </ListGroup.Item>
                                                         )}
