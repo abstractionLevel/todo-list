@@ -11,7 +11,8 @@ export const initDb = async () => {
     if (categories.length === 0) {
         const response = await dbCatergory.put({ // Inserisce il record di default
             _id: new Date().toISOString(),
-            name: 'Global'
+            name: 'Global',
+            position:1,
         });
         return [response];
     } else {
@@ -107,6 +108,7 @@ export const addCategory = async (payload) => {
         const response = await dbCatergory.put({
             _id: new Date().toISOString(), // utilizza la data corrente come ID
             name: payload.name,
+            position: payload.position
 
         });
         return response;
@@ -119,10 +121,12 @@ export const getAllCategoriesWidthTask = async () => {
     try {
         let response = [];
         let maxPosition = 0;
+        let maxPositionCategory = 0;
         const responseCategories = await dbCatergory.allDocs({ include_docs: true });
         const responseTasks = await db.allDocs({ include_docs: true });
         const categories = responseCategories.rows.map(val => val.doc);
         const tasks = responseTasks.rows.map(val => val.doc);
+        console.log("categories ", categories)
         categories.map(category => {
             let result = []
             tasks.map(task => {
@@ -134,13 +138,13 @@ export const getAllCategoriesWidthTask = async () => {
             if (result.length > 0) {
                 maxPosition = result.reduce((acc, cur) => { return acc.position > cur.position ? acc : cur });
             }
-            response.push({ category: category, task: result, totalTask: result.length, completed: taskCompleted.length, maxPositionTask: maxPosition.position });
+            if(maxPositionCategory===0 || category.position > maxPositionCategory) maxPositionCategory = category.position; // setto l'ultima posizione della categoria
+            response.push({ category: category, task: result, totalTask: result.length, completed: taskCompleted.length, maxPositionTask: maxPosition.position,maxPositionCategory:maxPositionCategory });
             result = [];
         });
         response.forEach(item=>{
             item.task.sort((a,b)=> a.position - b.position);
         })
-        console.log("res ", response)
         return response;
     } catch (error) {
         console.log("Errore durante il recupero delle categorie ", error)

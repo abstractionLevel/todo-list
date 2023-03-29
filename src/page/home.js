@@ -21,6 +21,7 @@ const Home = (props) => {
     const [taskSelected, setTaskSelected] = useState("");
     const [isModalDeleteCategoryOpen, setIsModalDeleteCategoryOpen] = useState(false);
     const [lastPositionTask, setLastPositionTask] = useState(1);
+    const [lastPositionCategory,setLastPositionCategory] = useState(1);
 
 
     const modifyTaskByDone = async (id, isDone) => {
@@ -73,7 +74,8 @@ const Home = (props) => {
         getAllCategoriesWidthTask()
             .then(response => {
                 response.map(result => {
-                    setLastPositionTask(result.maxPositionTask);;
+                    setLastPositionTask(result.maxPositionTask);
+                    setLastPositionCategory(result.maxPositionCategory);
                     if (result.category.name === "Global") {
                         setTasks(result.task);
                         setCategory(result.category);
@@ -172,10 +174,6 @@ const Home = (props) => {
         taskFetched.position = task.position
         await modifyTask(taskFetched);
     }
-    const getListStyle = () => ({
-        background: "red"
-
-    });
 
     return (
         <Container >
@@ -215,7 +213,7 @@ const Home = (props) => {
                                                 )}
                                             </Draggable>
                                         ))}
-                                    <FormAddCategory />
+                                    <FormAddCategory position={lastPositionCategory}/>
                                 </ListGroup>
                             )}
                         </Droppable>
@@ -226,7 +224,7 @@ const Home = (props) => {
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <p>tasks for the category: <b>{category.name}</b></p>
                             <div>
-                                {category.name !== "Global" &&
+                                {category.name !== "Globals" &&
                                     <Button variant="secondary" type="submit" className="mt-1 " style={{ marginRight: 20 }} size="sm" onClick={() => deleteCategory(category)}>
                                         Delete Category
                                     </Button>

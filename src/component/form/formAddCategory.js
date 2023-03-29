@@ -11,7 +11,7 @@ const FormAddCategory = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if(name) {
-            addCategory({ name: name })
+            addCategory({ name: name,position:props.position+1 })
             .then(response => {
                 setName("");
                 window.location.reload(false);
