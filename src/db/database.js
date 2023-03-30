@@ -52,6 +52,7 @@ export const getTasksByPriorityAndCategoryId = async (value, categoryId) => {
             selector: { priority: value },
         })
         const filteredTasks = response.docs.filter(task => task.category_id === categoryId);
+        filteredTasks.sort((a,b)=>a.position-b.position);
         return filteredTasks;
     } catch (error) {
         console.log('Errore durante la lettura del task: ', error);
@@ -75,7 +76,7 @@ export const getAllTasks = async (categoryId) => {
         const result = await db.allDocs({ include_docs: true });
         const tasks = result.rows.map(row => row.doc);
         const filteredTasks = tasks.filter(task => task.category_id === categoryId);
-        const sortedTasks = filteredTasks.sort((a, b) => a.isDone - b.isDone);
+        const sortedTasks = filteredTasks.sort((a, b) => a.position - b.position);
         return sortedTasks;
     } catch (error) {
         console.log('Errore durante il recupero dei task: ', error);

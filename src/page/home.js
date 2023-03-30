@@ -21,7 +21,7 @@ const Home = (props) => {
     const [taskSelected, setTaskSelected] = useState("");
     const [isModalDeleteCategoryOpen, setIsModalDeleteCategoryOpen] = useState(false);
     const [lastPositionTask, setLastPositionTask] = useState(1);
-    const [lastPositionCategory,setLastPositionCategory] = useState(1);
+    const [lastPositionCategory, setLastPositionCategory] = useState(1);
 
 
     const modifyTaskByDone = async (id, isDone) => {
@@ -162,7 +162,7 @@ const Home = (props) => {
         // // Aggiorno la lista degli elementi
         setCategories(items);
         let position = 1;
-        items.forEach(element=>{//aggiorno le category nel db per posizione
+        items.forEach(element => {//aggiorno le category nel db per posizione
             element.position = position;
             position = position + 1;
             saveCategory(element);
@@ -219,7 +219,7 @@ const Home = (props) => {
                                                 )}
                                             </Draggable>
                                         ))}
-                                    <FormAddCategory position={lastPositionCategory}/>
+                                    <FormAddCategory position={lastPositionCategory} />
                                 </ListGroup>
                             )}
                         </Droppable>
@@ -249,7 +249,7 @@ const Home = (props) => {
                             <Row style={{ marginLeft: "2px", marginBottom: "10px" }}>
                                 <Badge
                                     bg={"success"}
-                                    style={{ width: "100px" }}
+                                    style={{ width: "100px",cursor:'pointer' }}
                                     onClick={() => onClickPriority("low")}
                                     name="low"
                                 >
@@ -257,21 +257,21 @@ const Home = (props) => {
                                 </Badge>
                                 <Badge
                                     bg={"primary"}
-                                    style={{ width: "100px", marginLeft: '2px' }}
+                                    style={{ width: "100px", marginLeft: '2px',cursor:'pointer' }}
                                     onClick={() => onClickPriority("medium")}
                                 >
                                     medium
                                 </Badge>
                                 <Badge
                                     bg={"danger"}
-                                    style={{ width: "100px", marginLeft: '2px' }}
+                                    style={{ width: "100px", marginLeft: '2px',cursor:'pointer' }}
                                     onClick={() => onClickPriority("high")}
                                 >
                                     high
                                 </Badge>
                                 <Badge
                                     bg={"dark"}
-                                    style={{ width: "100px", marginLeft: '2px' }}
+                                    style={{ width: "100px", marginLeft: '2px',cursor:'pointer' }}
                                     onClick={() => onClickAll()}
                                 >
                                     all
@@ -296,7 +296,12 @@ const Home = (props) => {
                                                                 {...provided.dragHandleProps}>
                                                                 <Row >
                                                                     <Col sm={9} xs={9}>
-                                                                        <div style={{ wordWrap: "break-word" }}>{taskVal.description}</div>
+                                                                        <p style={{
+                                                                            wordWrap: "break-word",
+                                                                            color: taskVal.priority === "low" ? "green" : taskVal.priority === "medium" ? "blue" : "red",
+                                                                        }}>
+                                                                            {taskVal.description}
+                                                                        </p>
                                                                     </Col>
                                                                     <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
                                                                         <Form.Check
