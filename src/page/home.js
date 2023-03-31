@@ -73,12 +73,14 @@ const Home = (props) => {
     }
 
     useEffect(() => {
+        let lastPosition = null;
         getAllCategoriesWidthTask()
             .then(response => {
                 response.map(result => {
                     setLastPositionTask(result.maxPositionTask);
                     setLastPositionCategory(result.maxPositionCategory);
-                    if (result.category.position === 1) {
+                    if (lastPosition === null || result.category.position < lastPosition) {//setto i tasks per la categoria con position minore
+                        lastPosition = result.category.position;
                         setTasks(result.task);
                         setCategory(result.category);
                     }
@@ -89,11 +91,16 @@ const Home = (props) => {
 
     useEffect(() => {
         if (isUpdateCategory) {
+            let lastPosition = null;
             getAllCategoriesWidthTask()
                 .then(response => {
                     response.map(result => {
-                        if (result.category.name === "Global") {
-                            setTasks(result.task)
+                        setLastPositionTask(result.maxPositionTask);
+                        setLastPositionCategory(result.maxPositionCategory);
+                        if (lastPosition === null || result.category.position < lastPosition) {//setto i tasks per la categoria con position minore
+                            lastPosition = result.category.position;
+                            setTasks(result.task);
+                            setCategory(result.category);
                         }
                     })
                     setCategories(response);
@@ -182,7 +189,7 @@ const Home = (props) => {
         categoryFetched.position = category.position
         await modifyCategory(categoryFetched);
     }
-
+    //TODO: STAMPARE SOLO LE PRIORITY CHE HA IL TASK
     return (
         <Container >
             <Header title={""} />
@@ -194,32 +201,35 @@ const Home = (props) => {
                                 <ListGroup {...provided.droppableProps} ref={provided.innerRef}>
                                     {categories.length > 0 &&
                                         categories.map((result, index) => (
-                                            <Draggable key={result.category._id} draggableId={result.category._id} index={index} style={{ backgroundColor: "red" }}>
-                                                {(provided) => (
-                                                    <ListGroup.Item
-                                                        key={result.category._id}
-                                                        className="mb-3"
-                                                        style={{ cursor: "pointer", borderRadius: "2px", backgroundColor: result.category._id === (category && category._id) ? "#efefef" : null }}
-                                                        onClick={() => handleCategoryClick(result.category)}
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                    >
-                                                        <Row >
-                                                            <Col sm={9} xs={9}>
-                                                                <div style={{ wordWrap: "break-word" }}> <span style={{ fontWeight: "bold" }}>{result.category.name}</span></div>
-                                                            </Col>
+                                            <div style={{ cursor: "pointer", borderRadius: "4px", backgroundColor: result.category._id === (category && category._id) ? "#efefef" : null, padding: 4 }}>
+                                                <Draggable key={result.category._id} draggableId={result.category._id} index={index}>
+                                                    {(provided) => (
+                                                        <div
+                                                            key={result.category._id}
+                                                            className="mb-3"
+                                                            onClick={() => handleCategoryClick(result.category)}
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                        >
+                                                            <Row >
+                                                                <Col sm={9} xs={9}>
+                                                                    <div style={{ wordWrap: "break-word" }}> <span style={{ fontWeight: "bold" }}>{result.category.name}</span></div>
+                                                                </Col>
 
-                                                            <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
-                                                                <div>
-                                                                    {result.completed + "/" + result.totalTask}
-                                                                </div>
-                                                            </Col>
+                                                                <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
+                                                                    <div>
+                                                                        {result.completed + "/" + result.totalTask}
+                                                                    </div>
+                                                                </Col>
 
-                                                        </Row>
-                                                    </ListGroup.Item>
-                                                )}
-                                            </Draggable>
+                                                            </Row>
+                                                        </div>
+
+                                                    )}
+                                                </Draggable>
+                                            </div>
+
                                         ))}
                                     <FormAddCategory position={lastPositionCategory} />
                                 </ListGroup>
@@ -229,48 +239,59 @@ const Home = (props) => {
                 </Col>
                 <Col sm={8} xs={8}>
                     {category &&
-                        <div style={{ display: "flex", justifyContent: "space-between" }}>
-                            <p>tasks for the category: <b>{category.name}</b></p>
+                        <div className="d-flex justify-content-end">
+                            {/* <p >tasks for the category: <b style={{ wordWrap: "break-word" }}>{category.name}</b></p> */}
                             <div>
-                                {(categories.length>1) &&
-                                    <Button variant="secondary" type="submit" className="mt-1 " style={{ marginRight: 20 }} size="sm" onClick={() => deleteCategory(category)}>
+                                <Button variant="primary" type="submit" className="mt-1" style={{ marginRight: 4 }} onClick={() => setIsAddTaskModalOpen(true)} size="sm">
+                                    Add Task
+                                </Button>
+                                {(categories.length > 1) &&
+                                    <Button variant="secondary" type="submit" className="mt-1 " size="sm" onClick={() => deleteCategory(category)}>
                                         Delete Category
                                     </Button>
                                 }
-
-                                <Button variant="primary" type="submit" className="mt-1" onClick={() => setIsAddTaskModalOpen(true)} size="sm">
-                                    Add Task
-                                </Button>
                             </div>
                         </div>
                     }
                     <div style={{ borderBottom: "1px solid black", marginBottom: "10px", marginTop: "10px" }}>
                     </div>
                     {tasks.length > 0 ?
+
                         <ListGroup>
                             <Row style={{ marginLeft: "2px", marginBottom: "10px" }}>
-                                <Badge
-                                    bg={"success"}
-                                    style={{ width: "100px", cursor: 'pointer' }}
-                                    onClick={() => onClickPriority("low")}
-                                    name="low"
-                                >
-                                    low
-                                </Badge>
-                                <Badge
-                                    bg={"primary"}
-                                    style={{ width: "100px", marginLeft: '2px', cursor: 'pointer' }}
-                                    onClick={() => onClickPriority("medium")}
-                                >
-                                    medium
-                                </Badge>
-                                <Badge
-                                    bg={"danger"}
-                                    style={{ width: "100px", marginLeft: '2px', cursor: 'pointer' }}
-                                    onClick={() => onClickPriority("high")}
-                                >
-                                    high
-                                </Badge>
+                                {[...new Set(tasks.map(task => task.priority))].map(priority => (
+                                <>
+                                    {priority === "low" &&
+                                        <Badge
+                                            bg={"success"}
+                                            style={{ width: "100px", cursor: 'pointer' }}
+                                            onClick={() => onClickPriority("low")}
+                                            name="low"
+                                        >
+                                            low
+                                        </Badge>
+                                    }
+                                    {priority === "medium" &&
+                                        <Badge
+                                            bg={"primary"}
+                                            style={{ width: "100px", marginLeft: '2px', cursor: 'pointer' }}
+                                            onClick={() => onClickPriority("medium")}
+                                        >
+                                            medium
+                                        </Badge>
+                                    }
+                                    {priority === "high" &&
+                                        <Badge
+                                            bg={"danger"}
+                                            style={{ width: "100px", marginLeft: '2px', cursor: 'pointer' }}
+                                            onClick={() => onClickPriority("high")}
+                                        >
+                                            high
+                                        </Badge>
+                                    }
+
+                                </>
+                                ))}
                                 <Badge
                                     bg={"dark"}
                                     style={{ width: "100px", marginLeft: '2px', cursor: 'pointer' }}
