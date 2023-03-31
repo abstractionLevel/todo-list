@@ -78,7 +78,7 @@ const Home = (props) => {
                 response.map(result => {
                     setLastPositionTask(result.maxPositionTask);
                     setLastPositionCategory(result.maxPositionCategory);
-                    if (result.category.name === "Global") {
+                    if (result.category.position === 1) {
                         setTasks(result.task);
                         setCategory(result.category);
                     }
@@ -232,7 +232,7 @@ const Home = (props) => {
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <p>tasks for the category: <b>{category.name}</b></p>
                             <div>
-                                {category.name !== "Globals" &&
+                                {(categories.length>1) &&
                                     <Button variant="secondary" type="submit" className="mt-1 " style={{ marginRight: 20 }} size="sm" onClick={() => deleteCategory(category)}>
                                         Delete Category
                                     </Button>
