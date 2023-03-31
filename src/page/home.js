@@ -9,6 +9,8 @@ import FormAddCategory from '../component/form/formAddCategory';
 import ModalAddTask from '../component/modal/modalAddTask';
 import ModalDeleteCategory from '../component/modal/modalDeleteCategory';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import moment from 'moment';
+
 
 const Home = (props) => {
 
@@ -249,7 +251,7 @@ const Home = (props) => {
                             <Row style={{ marginLeft: "2px", marginBottom: "10px" }}>
                                 <Badge
                                     bg={"success"}
-                                    style={{ width: "100px",cursor:'pointer' }}
+                                    style={{ width: "100px", cursor: 'pointer' }}
                                     onClick={() => onClickPriority("low")}
                                     name="low"
                                 >
@@ -257,21 +259,21 @@ const Home = (props) => {
                                 </Badge>
                                 <Badge
                                     bg={"primary"}
-                                    style={{ width: "100px", marginLeft: '2px',cursor:'pointer' }}
+                                    style={{ width: "100px", marginLeft: '2px', cursor: 'pointer' }}
                                     onClick={() => onClickPriority("medium")}
                                 >
                                     medium
                                 </Badge>
                                 <Badge
                                     bg={"danger"}
-                                    style={{ width: "100px", marginLeft: '2px',cursor:'pointer' }}
+                                    style={{ width: "100px", marginLeft: '2px', cursor: 'pointer' }}
                                     onClick={() => onClickPriority("high")}
                                 >
                                     high
                                 </Badge>
                                 <Badge
                                     bg={"dark"}
-                                    style={{ width: "100px", marginLeft: '2px',cursor:'pointer' }}
+                                    style={{ width: "100px", marginLeft: '2px', cursor: 'pointer' }}
                                     onClick={() => onClickAll()}
                                 >
                                     all
@@ -283,27 +285,29 @@ const Home = (props) => {
                                         {(provided) => (
                                             <ListGroup {...provided.droppableProps} ref={provided.innerRef}>
                                                 {tasks.map((taskVal, index) => (
-                                                    <Draggable key={taskVal._id} draggableId={taskVal._id} index={index} style={{ backgroundColor: "red" }}>
+                                                    <Draggable key={taskVal._id} draggableId={taskVal._id} index={index} >
                                                         {(provided) => (
                                                             <ListGroup.Item key={taskVal._id} className="mb-4"
-                                                                // style={{
-                                                                //     textDecoration: taskVal.isDone ? "line-through" : "none",
-                                                                //     borderRadius: 0,
-                                                                //     backgroundColor: taskVal.priority === "low" ? "rgba(0, 128, 0, 0.1)!important" : taskVal.priority === "medium" ? "rgba(0, 0, 255, 0.1)" : "rgba(255, 0, 0, 0.1)",
-                                                                // }}
+                                                                style={{
+                                                                    textDecoration: taskVal.isDone ? "line-through" : "none",
+                                                                    borderRadius: 0,
+                                                                    important: true,
+                                                                    ...provided.draggableProps.style,
+                                                                }}
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
                                                                 {...provided.dragHandleProps}>
                                                                 <Row >
-                                                                    <Col sm={9} xs={9}>
+                                                                    <Col sm={9} xs={9} style={{ display: 'flex', alignItems: 'center' }}>
                                                                         <p style={{
                                                                             wordWrap: "break-word",
-                                                                            color: taskVal.priority === "low" ? "green" : taskVal.priority === "medium" ? "blue" : "red",
                                                                         }}>
                                                                             {taskVal.description}
                                                                         </p>
+
                                                                     </Col>
                                                                     <Col sm={3} xs={3} className="d-flex justify-content-end align-items-center">
+
                                                                         <Form.Check
                                                                             inline
                                                                             type="checkbox"
@@ -312,7 +316,34 @@ const Home = (props) => {
 
                                                                         />
                                                                         <Trash onClick={() => deleteTaskOnclick(taskVal)} />
+
                                                                     </Col>
+                                                                    <Col sm={9} xs={9} className="d-flex">
+                                                                        <p style={{
+                                                                            wordWrap: "break-word",
+                                                                            fontSize: "80%",
+                                                                            opacity: 0.7,
+                                                                            margin: 0
+                                                                        }}>{moment(taskVal._id).format('DD/MM/YYYY')}
+                                                                        </p>
+
+                                                                    </Col>
+                                                                    <Col sm={3} xs={3} className="d-flex justify-content-end">
+                                                                        <div style={{
+                                                                            backgroundColor: taskVal.priority === "low" ? "green" : taskVal.priority === "medium" ? "blue" : "red",
+                                                                            textAlign: 'center',
+                                                                            display: 'inline-block',
+                                                                            whiteSpace: 'nowrap',
+                                                                            color: 'white',
+                                                                            fontWeight: 'bold',
+                                                                            borderRadius: '5px',
+                                                                            padding: 4,
+                                                                            fontSize: 12,
+                                                                        }}>
+                                                                            priority:{taskVal.priority}
+                                                                        </div>
+                                                                    </Col>
+
                                                                 </Row>
                                                             </ListGroup.Item>
                                                         )}

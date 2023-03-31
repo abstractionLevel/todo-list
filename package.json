@@ -25,6 +25,7 @@
     "https-browserify": "^1.0.0",
     "https-proxy-agent": "^5.0.1",
     "mock-aws-s3": "^4.0.2",
+    "moment": "^2.29.4",
     "nedb-promises": "^6.2.1",
     "net": "^1.0.2",
     "nock": "^13.3.0",
