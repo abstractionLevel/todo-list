@@ -351,7 +351,7 @@ const Home = (props) => {
                                                                     </Col>
                                                                     <Col sm={3} xs={3} className="d-flex justify-content-end">
                                                                         <div style={{
-                                                                            backgroundColor: taskVal.priority === "low" ? "green" : taskVal.priority === "medium" ? "blue" : "red",
+                                                                            backgroundColor: taskVal.priority === "low" ? "green" : taskVal.priority === "medium" ? "#0d6efd" : "red",
                                                                             textAlign: 'center',
                                                                             display: 'inline-block',
                                                                             whiteSpace: 'nowrap',
