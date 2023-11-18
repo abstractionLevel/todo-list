@@ -1,6 +1,6 @@
 # ToDo List App
 
-This project is a simple ToDo List app built with [technology/framework]. The app allows users to manage lists of tasks in an intuitive and straightforward way.
+This project is a simple ToDo List app built with eletron. The app allows users to manage lists of tasks in an intuitive and straightforward way.
 
 ## Key Features
 
