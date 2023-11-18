@@ -10,18 +10,9 @@ This project is a simple ToDo List app built with electron . The app allows user
 
 - **Clear View:** View your tasks in a clear and organized manner.
 
-
-## Installation and Running
-
-1. Clone the repository: `git clone [repository URL]`
-2. Install dependencies: `npm install`
-3. Run the application: `npm start`
-
-Make sure to have [Node.js](https://nodejs.org/) installed before running the application.
-
 ## Download
 
-You can also download the app from [this link](https://deluciaugo.wixsite.com/todolistapp).
+You can  download the app from [this link](https://deluciaugo.wixsite.com/todolistapp).
 
 ## License
 
